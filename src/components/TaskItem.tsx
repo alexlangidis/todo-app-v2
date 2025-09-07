@@ -2,6 +2,7 @@ import React from "react";
 import type { Task } from "../types";
 import { TASK_CATEGORIES } from "../types";
 import Button from "./Button";
+import ViewTaskModal from "./ViewTaskModal";
 
 interface TaskItemProps {
   task: Task;
@@ -28,7 +29,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isDragging = false,
 }) => {
   const [isEditing, setIsEditing] = React.useState(false);
+  const [isViewing, setIsViewing] = React.useState(false);
   const [editText, setEditText] = React.useState(task.text);
+  const [screenSize, setScreenSize] = React.useState<
+    "mobile" | "tablet" | "desktop"
+  >("desktop");
   const editInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -37,6 +42,45 @@ const TaskItem: React.FC<TaskItemProps> = ({
       editInputRef.current.select();
     }
   }, [isEditing]);
+
+  // Screen size detection for responsive truncation
+  React.useEffect(() => {
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setScreenSize("mobile");
+      } else if (width < 1024) {
+        setScreenSize("tablet");
+      } else {
+        setScreenSize("desktop");
+      }
+    };
+
+    updateScreenSize();
+    window.addEventListener("resize", updateScreenSize);
+    return () => window.removeEventListener("resize", updateScreenSize);
+  }, []);
+
+  // Get character limit based on screen size
+  const getCharLimit = () => {
+    switch (screenSize) {
+      case "mobile":
+        return 25;
+      case "tablet":
+        return 35;
+      case "desktop":
+        return 35;
+      default:
+        return 35;
+    }
+  };
+
+  // Truncate text based on screen size
+  const getTruncatedText = (text: string) => {
+    const limit = getCharLimit();
+    if (text.length <= limit) return text;
+    return `${text.substring(0, limit)}...`;
+  };
 
   const handleToggle = () => {
     try {
@@ -153,8 +197,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 ? "line-through text-gray-500 dark:text-gray-400"
                 : ""
             }`}
+            title={task.text.length > getCharLimit() ? task.text : undefined}
           >
-            {task.text}
+            {getTruncatedText(task.text)}
           </span>
           {task.category && (
             <span
@@ -193,12 +238,21 @@ const TaskItem: React.FC<TaskItemProps> = ({
         </div>
       )}
       {!showSelection && (
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1 shrink-0">
+          <Button
+            onClick={() => setIsViewing(true)}
+            variant="secondary"
+            size="sm"
+            className="px-1.5 py-1 text-xs sm:px-2 sm:py-1 sm:text-sm cursor-pointer"
+            aria-label="View task details"
+          >
+            👁️
+          </Button>
           <Button
             onClick={isEditing ? handleEditSubmit : handleDoubleClick}
             variant="secondary"
             size="sm"
-            className="px-2 py-1 text-sm cursor-pointer"
+            className="px-1.5 py-1 text-xs sm:px-2 sm:py-1 sm:text-sm cursor-pointer"
             aria-label={isEditing ? "Save task" : "Edit task"}
           >
             {isEditing ? "💾" : "✏️"}
@@ -206,9 +260,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
           {onDelete && (
             <Button
               onClick={handleDelete}
-              variant="danger"
+              variant="secondary"
               size="sm"
-              className="px-2 py-1 text-lg cursor-pointer"
+              className="px-1.5 py-1 text-sm sm:px-2 sm:py-1 sm:text-lg cursor-pointer"
               aria-label="Delete task"
             >
               🗑️
@@ -216,6 +270,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
           )}
         </div>
       )}
+
+      {/* View Task Modal */}
+      <ViewTaskModal
+        task={task}
+        isOpen={isViewing}
+        onClose={() => setIsViewing(false)}
+        onEdit={onEdit}
+      />
     </div>
   );
 };

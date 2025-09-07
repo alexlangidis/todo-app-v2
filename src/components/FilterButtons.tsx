@@ -32,6 +32,10 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({
             currentFilter === key
               ? key === "completed"
                 ? "bg-green-500 text-white dark:bg-green-600"
+                : key === "all"
+                ? "bg-purple-500 text-white dark:bg-purple-600"
+                : key === "active"
+                ? "bg-orange-500 text-white dark:bg-orange-600"
                 : "bg-blue-500 text-white dark:bg-blue-600"
               : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           }`}

@@ -3,7 +3,6 @@ import type { TaskFilter } from "./types";
 import { useTasks } from "./hooks/useTasks";
 import { AppHeader, AppFilters, AppContent } from "./components/App";
 import TaskForm from "./components/TaskForm";
-import BulkActions from "./components/BulkActions";
 import TaskStats from "./components/TaskStats";
 
 /**
@@ -28,6 +27,7 @@ function App() {
     editTask,
     reorderTasks,
     bulkComplete,
+    bulkUncomplete,
     bulkDelete,
     bulkCategoryChange,
     taskStats,
@@ -104,6 +104,11 @@ function App() {
     setSelectedTasks([]);
   };
 
+  const handleBulkUncomplete = () => {
+    bulkUncomplete(selectedTasks);
+    setSelectedTasks([]);
+  };
+
   const toggleBulkActions = () => {
     if (showBulkActions) {
       setShowBulkActions(false);
@@ -111,6 +116,15 @@ function App() {
     } else {
       setShowBulkActions(true);
     }
+  };
+
+  const clearFilters = () => {
+    setFilter("all");
+    setSearchQuery("");
+    setCategoryFilter("");
+    setPriorityFilter("");
+    setSelectedTasks([]);
+    setShowBulkActions(false);
   };
 
   // Filter tasks based on current filters
@@ -168,22 +182,8 @@ function App() {
                 taskCounts={taskStats}
                 showBulkActions={showBulkActions}
                 onToggleBulkActions={toggleBulkActions}
+                onClearFilters={clearFilters}
               />
-
-              {showBulkActions && selectedTasks.length > 0 && (
-                <BulkActions
-                  selectedTasks={selectedTasks}
-                  onSelectAll={selectAllTasks}
-                  totalTasks={filteredTasks.length}
-                  onBulkComplete={handleBulkComplete}
-                  onBulkDelete={handleBulkDelete}
-                  onBulkCategoryChange={handleBulkCategoryChange}
-                  onClearSelection={() => {
-                    setSelectedTasks([]);
-                    setShowBulkActions(false);
-                  }}
-                />
-              )}
 
               <AppContent
                 tasks={filteredTasks}
@@ -202,6 +202,7 @@ function App() {
                 onSelectAll={selectAllTasks}
                 onClearSelection={clearSelection}
                 onBulkComplete={handleBulkComplete}
+                onBulkUncomplete={handleBulkUncomplete}
                 onBulkDelete={handleBulkDelete}
                 onBulkCategoryChange={handleBulkCategoryChange}
               />

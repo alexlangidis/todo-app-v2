@@ -93,6 +93,17 @@ export const useTasks = () => {
     [setTasks]
   );
 
+  const bulkUncomplete = useCallback(
+    (selectedIds: string[]) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          selectedIds.includes(task.id) ? { ...task, completed: false } : task
+        )
+      );
+    },
+    [setTasks]
+  );
+
   const bulkDelete = useCallback(
     (selectedIds: string[]) => {
       setTasks((prevTasks) =>
@@ -133,6 +144,7 @@ export const useTasks = () => {
     editTask,
     reorderTasks,
     bulkComplete,
+    bulkUncomplete,
     bulkDelete,
     bulkCategoryChange,
     taskStats,

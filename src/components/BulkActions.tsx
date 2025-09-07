@@ -7,6 +7,7 @@ interface BulkActionsProps {
   onSelectAll: () => void;
   onClearSelection: () => void;
   onBulkComplete: () => void;
+  onBulkUncomplete: () => void;
   onBulkDelete: () => void;
   onBulkCategoryChange: (category: string) => void;
   totalTasks: number;
@@ -17,6 +18,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   onSelectAll,
   onClearSelection,
   onBulkComplete,
+  onBulkUncomplete,
   onBulkDelete,
   onBulkCategoryChange,
   totalTasks,
@@ -60,6 +62,10 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
           <Button onClick={onBulkComplete} variant="primary" size="sm">
             Complete
+          </Button>
+
+          <Button onClick={onBulkUncomplete} variant="secondary" size="sm">
+            Uncomplete
           </Button>
 
           <Button onClick={onBulkDelete} variant="danger" size="sm">

@@ -16,6 +16,7 @@ interface AppFiltersProps {
   taskCounts: { all: number; active: number; completed: number };
   showBulkActions: boolean;
   onToggleBulkActions: () => void;
+  onClearFilters: () => void;
 }
 
 const AppFilters: React.FC<AppFiltersProps> = ({
@@ -30,6 +31,7 @@ const AppFilters: React.FC<AppFiltersProps> = ({
   taskCounts,
   showBulkActions,
   onToggleBulkActions,
+  onClearFilters,
 }) => {
   return (
     <>
@@ -40,16 +42,25 @@ const AppFilters: React.FC<AppFiltersProps> = ({
           taskCounts={taskCounts}
         />
 
-        <button
-          onClick={onToggleBulkActions}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer self-start ${
-            showBulkActions
-              ? "bg-orange-500 text-white dark:bg-orange-600"
-              : "bg-orange-200 text-orange-700 hover:bg-orange-300 dark:bg-orange-700 dark:text-orange-300 dark:hover:bg-orange-600"
-          }`}
-        >
-          {showBulkActions ? "Exit Bulk" : "Bulk Select"}
-        </button>
+        <div className="flex gap-2 self-start">
+          <button
+            onClick={onToggleBulkActions}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+              showBulkActions
+                ? "bg-orange-500 text-white dark:bg-orange-600"
+                : "bg-orange-200 text-orange-700 hover:bg-orange-300 dark:bg-orange-700 dark:text-orange-300 dark:hover:bg-orange-600"
+            }`}
+          >
+            {showBulkActions ? "Exit Bulk" : "Bulk Select"}
+          </button>
+
+          <button
+            onClick={onClearFilters}
+            className="px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+          >
+            Clear Filters
+          </button>
+        </div>
       </div>
 
       <div className="mb-4">

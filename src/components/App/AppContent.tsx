@@ -25,6 +25,7 @@ interface AppContentProps {
   onSelectAll: () => void;
   onClearSelection: () => void;
   onBulkComplete: () => void;
+  onBulkUncomplete: () => void;
   onBulkDelete: () => void;
   onBulkCategoryChange: (category: string) => void;
 }
@@ -45,6 +46,7 @@ const AppContent: React.FC<AppContentProps> = ({
   onSelectAll,
   onClearSelection,
   onBulkComplete,
+  onBulkUncomplete,
   onBulkDelete,
   onBulkCategoryChange,
 }) => {
@@ -56,6 +58,7 @@ const AppContent: React.FC<AppContentProps> = ({
           onSelectAll={onSelectAll}
           onClearSelection={onClearSelection}
           onBulkComplete={onBulkComplete}
+          onBulkUncomplete={onBulkUncomplete}
           onBulkDelete={onBulkDelete}
           onBulkCategoryChange={onBulkCategoryChange}
           totalTasks={tasks.length}
