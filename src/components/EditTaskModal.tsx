@@ -3,54 +3,55 @@ import type { Task } from "../types";
 import { TASK_CATEGORIES } from "../types";
 import Button from "./Button";
 
-interface ViewTaskModalProps {
+interface EditTaskModalProps {
   task: Task;
   isOpen: boolean;
   onClose: () => void;
-  onEdit?: (id: string, newText: string) => void;
+  onSave: (id: string, newText: string) => void;
 }
 
-const ViewTaskModal: React.FC<ViewTaskModalProps> = ({
+const EditTaskModal: React.FC<EditTaskModalProps> = ({
   task,
   isOpen,
   onClose,
-  onEdit,
+  onSave,
 }) => {
-  const [isEditing, setIsEditing] = React.useState(false);
   const [editText, setEditText] = React.useState(task.text);
   const editTextareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    if (isEditing && editTextareaRef.current) {
-      editTextareaRef.current.focus();
-      editTextareaRef.current.select();
-    }
-  }, [isEditing]);
 
   React.useEffect(() => {
     setEditText(task.text);
   }, [task.text]);
 
+  React.useEffect(() => {
+    if (isOpen && editTextareaRef.current) {
+      editTextareaRef.current.focus();
+      // Position cursor at the end of the text
+      const textLength = editTextareaRef.current.value.length;
+      editTextareaRef.current.setSelectionRange(textLength, textLength);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const handleEditSubmit = () => {
+  const handleSave = () => {
     const trimmedText = editText.trim();
-    if (trimmedText && trimmedText !== task.text && onEdit) {
-      onEdit(task.id, trimmedText);
+    if (trimmedText && trimmedText !== task.text) {
+      onSave(task.id, trimmedText);
     }
-    setIsEditing(false);
+    onClose();
   };
 
-  const handleEditCancel = () => {
+  const handleCancel = () => {
     setEditText(task.text);
-    setIsEditing(false);
+    onClose();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && e.ctrlKey) {
-      handleEditSubmit();
+      handleSave();
     } else if (e.key === "Escape") {
-      handleEditCancel();
+      handleCancel();
     }
   };
 
@@ -59,7 +60,7 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {isEditing ? "Edit Task" : "Task Details"}
+            Edit Task
           </h3>
           <button
             onClick={onClose}
@@ -86,25 +87,16 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({
                 </span>
               </div>
             </div>
-            {isEditing ? (
-              <textarea
-                ref={editTextareaRef}
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-vertical focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={10}
-                maxLength={2888}
-                placeholder="Enter task description..."
-              />
-            ) : (
-              <textarea
-                value={task.text}
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-default "
-                rows={Math.min(Math.max(task.text.length / 40, 10), 10)}
-              />
-            )}
+            <textarea
+              ref={editTextareaRef}
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-vertical focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              rows={Math.min(Math.max(editText.length / 40, 10), 10)}
+              maxLength={2888}
+              placeholder="Enter task description..."
+            />
           </div>
 
           <div className="grid grid-cols-4 gap-4">
@@ -181,43 +173,20 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({
 
         <div className="flex justify-between items-center p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {isEditing ? "Press Ctrl+Enter to save, Esc to cancel" : ""}
+            Press Ctrl+Enter to save, Esc to cancel
           </div>
           <div className="flex gap-2">
-            {isEditing ? (
-              <>
-                <Button
-                  onClick={handleEditCancel}
-                  variant="secondary"
-                  size="sm"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleEditSubmit}
-                  variant="primary"
-                  size="sm"
-                  disabled={!editText.trim() || editText.trim() === task.text}
-                >
-                  Save Changes
-                </Button>
-              </>
-            ) : (
-              <>
-                {onEdit && (
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    variant="secondary"
-                    size="sm"
-                  >
-                    ✏️ Edit
-                  </Button>
-                )}
-                <Button onClick={onClose} variant="secondary" size="sm">
-                  Close
-                </Button>
-              </>
-            )}
+            <Button onClick={handleCancel} variant="secondary" size="sm">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              variant="primary"
+              size="sm"
+              disabled={!editText.trim() || editText.trim() === task.text}
+            >
+              Save Changes
+            </Button>
           </div>
         </div>
       </div>
@@ -225,4 +194,4 @@ const ViewTaskModal: React.FC<ViewTaskModalProps> = ({
   );
 };
 
-export default ViewTaskModal;
+export default EditTaskModal;
