@@ -40,7 +40,6 @@ function App() {
   const [priorityFilter, setPriorityFilter] = useState<string>("");
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [showBulkActions, setShowBulkActions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -87,31 +86,19 @@ function App() {
     setSelectedTasks([]);
   };
 
-  const handleBulkComplete = async () => {
-    setIsLoading(true);
-    // Simulate async operation (replace with actual async work if needed)
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  const handleBulkComplete = () => {
     bulkComplete(selectedTasks);
     setSelectedTasks([]);
-    setIsLoading(false);
   };
 
-  const handleBulkDelete = async () => {
-    setIsLoading(true);
-    // Simulate async operation (replace with actual async work if needed)
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  const handleBulkDelete = () => {
     bulkDelete(selectedTasks);
     setSelectedTasks([]);
-    setIsLoading(false);
   };
 
-  const handleBulkCategoryChange = async (category: string) => {
-    setIsLoading(true);
-    // Simulate async operation (replace with actual async work if needed)
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  const handleBulkCategoryChange = (category: string) => {
     bulkCategoryChange(selectedTasks, category);
     setSelectedTasks([]);
-    setIsLoading(false);
   };
 
   const toggleBulkActions = () => {
@@ -150,7 +137,6 @@ function App() {
           priorityFilter={priorityFilter}
           selectedTasks={selectedTasks}
           showBulkActions={showBulkActions}
-          isLoading={isLoading}
           onAddTask={addTask}
           onToggle={toggleTask}
           onDelete={deleteTask}

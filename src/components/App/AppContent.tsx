@@ -13,7 +13,6 @@ interface AppContentProps {
   priorityFilter: string;
   selectedTasks: string[];
   showBulkActions: boolean;
-  isLoading: boolean;
   onAddTask: (
     text: string,
     category?: string,
@@ -27,9 +26,9 @@ interface AppContentProps {
   onSelectTask: (id: string) => void;
   onSelectAll: () => void;
   onClearSelection: () => void;
-  onBulkComplete: () => Promise<void>;
-  onBulkDelete: () => Promise<void>;
-  onBulkCategoryChange: (category: string) => Promise<void>;
+  onBulkComplete: () => void;
+  onBulkDelete: () => void;
+  onBulkCategoryChange: (category: string) => void;
 }
 
 const AppContent: React.FC<AppContentProps> = ({
@@ -40,8 +39,6 @@ const AppContent: React.FC<AppContentProps> = ({
   priorityFilter,
   selectedTasks,
   showBulkActions,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isLoading, // TODO: Use for loading states in bulk operations
   onAddTask,
   onToggle,
   onDelete,
