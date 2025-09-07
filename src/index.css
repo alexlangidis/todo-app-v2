@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-font-family: system-ui, -apple-system, sans-serif;
+  --default-font-feature-settings: normal;
+  --default-font-variation-settings: normal;
+  --default-line-height: 1.5;
+  --default-letter-spacing: 0;
+}
+
+@variant dark (.dark &);
+
+/* Custom styles */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
