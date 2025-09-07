@@ -54,24 +54,15 @@ const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
     <form onSubmit={handleSubmit} className="mb-4 ">
       <div className="flex flex-col gap-2 ">
         <div className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
+          <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Add a new task..."
             className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             maxLength={100}
           />
-          <Button
-            type="submit"
-            variant="primary"
-            size="sm"
-            className="px-4 py-2 text-sm cursor-pointer whitespace-nowrap sm:w-auto w-full"
-          >
-            Add Task
-          </Button>
         </div>
-        <div className="flex flex-col md:flex-row gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -84,12 +75,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
               </option>
             ))}
           </select>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-full cursor-pointer"
-          />
           <select
             value={priority}
             onChange={(e) =>
@@ -104,6 +89,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
               </option>
             ))}
           </select>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-full cursor-pointer"
+          />
+          <Button
+            type="submit"
+            variant="primary"
+            size="sm"
+            className="px-4 py-2 text-sm cursor-pointer whitespace-nowrap sm:w-auto w-full"
+          >
+            Add Task
+          </Button>
         </div>
       </div>
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import type { TaskFilter } from "./types";
 import { useTasks } from "./hooks/useTasks";
 import { AppHeader, AppFilters, AppContent } from "./components/App";
+import TaskForm from "./components/TaskForm";
+import BulkActions from "./components/BulkActions";
+import TaskStats from "./components/TaskStats";
 
 /**
  * Main application component for the Todo App
@@ -110,45 +113,101 @@ function App() {
     }
   };
 
+  // Filter tasks based on current filters
+  const filteredTasks = tasks.filter((task) => {
+    const statusMatch =
+      filter === "all" ||
+      (filter === "active" && !task.completed) ||
+      (filter === "completed" && task.completed);
+    const searchMatch =
+      searchQuery === "" ||
+      task.text.toLowerCase().includes(searchQuery.toLowerCase());
+    const categoryMatch =
+      categoryFilter === "" || task.category === categoryFilter;
+    const priorityMatch =
+      priorityFilter === "" || task.priority === priorityFilter;
+    return statusMatch && searchMatch && categoryMatch && priorityMatch;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      <div className="max-w-md md:max-w-lg lg:max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+      <div className="w-full mx-auto">
         <AppHeader isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
-        <AppFilters
-          filter={filter}
-          onFilterChange={setFilter}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          categoryFilter={categoryFilter}
-          onCategoryFilterChange={setCategoryFilter}
-          priorityFilter={priorityFilter}
-          onPriorityFilterChange={setPriorityFilter}
-          taskCounts={taskStats}
-          showBulkActions={showBulkActions}
-          onToggleBulkActions={toggleBulkActions}
-        />
+        {/* 3-Column Grid Layout with adjusted widths */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
+          {/* Column 1: Task Statistics */}
+          <div className="md:col-span-4 lg:col-span-2 xl:col-span-1">
+            <div className="sticky top-4 rounded-lg shadow-lg">
+              <TaskStats tasks={tasks} />
+            </div>
+          </div>
 
-        <AppContent
-          tasks={tasks}
-          filter={filter}
-          searchQuery={searchQuery}
-          categoryFilter={categoryFilter}
-          priorityFilter={priorityFilter}
-          selectedTasks={selectedTasks}
-          showBulkActions={showBulkActions}
-          onAddTask={addTask}
-          onToggle={toggleTask}
-          onDelete={deleteTask}
-          onEdit={editTask}
-          onReorder={reorderTasks}
-          onSelectTask={selectTask}
-          onSelectAll={selectAllTasks}
-          onClearSelection={clearSelection}
-          onBulkComplete={handleBulkComplete}
-          onBulkDelete={handleBulkDelete}
-          onBulkCategoryChange={handleBulkCategoryChange}
-        />
+          {/* Middle: Add New Task Form */}
+          <div className=" md:col-span-4 lg:col-span-2 xl:col-span-1">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                ➕ Add New Task
+              </h2>
+              <TaskForm onAddTask={addTask} />
+            </div>
+          </div>
+
+          {/* Right: Filters, Bulk Actions & Tasks */}
+          <div className="md:col-span-4 lg:col-span-4 xl:col-span-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <AppFilters
+                filter={filter}
+                onFilterChange={setFilter}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                categoryFilter={categoryFilter}
+                onCategoryFilterChange={setCategoryFilter}
+                priorityFilter={priorityFilter}
+                onPriorityFilterChange={setPriorityFilter}
+                taskCounts={taskStats}
+                showBulkActions={showBulkActions}
+                onToggleBulkActions={toggleBulkActions}
+              />
+
+              {showBulkActions && selectedTasks.length > 0 && (
+                <BulkActions
+                  selectedTasks={selectedTasks}
+                  onSelectAll={selectAllTasks}
+                  totalTasks={filteredTasks.length}
+                  onBulkComplete={handleBulkComplete}
+                  onBulkDelete={handleBulkDelete}
+                  onBulkCategoryChange={handleBulkCategoryChange}
+                  onClearSelection={() => {
+                    setSelectedTasks([]);
+                    setShowBulkActions(false);
+                  }}
+                />
+              )}
+
+              <AppContent
+                tasks={filteredTasks}
+                filter={filter}
+                searchQuery={searchQuery}
+                categoryFilter={categoryFilter}
+                priorityFilter={priorityFilter}
+                selectedTasks={selectedTasks}
+                showBulkActions={showBulkActions}
+                onAddTask={addTask}
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEdit={editTask}
+                onReorder={reorderTasks}
+                onSelectTask={selectTask}
+                onSelectAll={selectAllTasks}
+                onClearSelection={clearSelection}
+                onBulkComplete={handleBulkComplete}
+                onBulkDelete={handleBulkDelete}
+                onBulkCategoryChange={handleBulkCategoryChange}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

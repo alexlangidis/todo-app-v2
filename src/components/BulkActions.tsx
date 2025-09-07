@@ -23,13 +23,13 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 }) => {
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
-        <span className="font-medium">
+      <div className="flex flex-col sm:flex-row m-auto flex-wrap items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+        <span className="font-medium m-auto sm:m-0 sm:mr-0">
           {selectedTasks.length} task{selectedTasks.length !== 1 ? "s" : ""}{" "}
           selected
         </span>
 
-        <div className="flex gap-2 ml-auto">
+        <div className="flex flex-col sm:flex-row gap-2 m-auto sm:ml-auto sm:m-0">
           <select
             onChange={(e) => onBulkCategoryChange(e.target.value)}
             className="px-3 py-1 text-sm border border-blue-300 dark:border-blue-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"

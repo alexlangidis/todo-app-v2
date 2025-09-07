@@ -1,8 +1,6 @@
 import React from "react";
 import type { Task, TaskFilter } from "../../types";
-import TaskForm from "../TaskForm";
 import TaskList from "../TaskList";
-import TaskStats from "../TaskStats";
 import BulkActions from "../BulkActions";
 
 interface AppContentProps {
@@ -39,7 +37,6 @@ const AppContent: React.FC<AppContentProps> = ({
   priorityFilter,
   selectedTasks,
   showBulkActions,
-  onAddTask,
   onToggle,
   onDelete,
   onEdit,
@@ -53,9 +50,6 @@ const AppContent: React.FC<AppContentProps> = ({
 }) => {
   return (
     <>
-      <TaskStats tasks={tasks} />
-      <TaskForm onAddTask={onAddTask} />
-
       {showBulkActions && (
         <BulkActions
           selectedTasks={selectedTasks}
