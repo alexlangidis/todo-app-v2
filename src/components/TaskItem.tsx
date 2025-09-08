@@ -115,43 +115,42 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border hover:shadow-md transition-shadow ${
+      className={`p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border hover:shadow-md transition-shadow ${
         isSelected
           ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
           : "border-gray-200 dark:border-gray-600"
       } ${isDragging ? "opacity-50" : ""}`}
     >
-      <div className="flex items-center gap-2 shrink-0">
-        {dragHandleProps && (
-          <div
-            {...dragHandleProps}
-            className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1"
-          >
-            ⋮⋮
-          </div>
-        )}
-        {showSelection && (
-          <input
-            type="checkbox"
-            checked={isSelected}
-            onChange={handleSelect}
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-          />
-        )}
-        {!showSelection && (
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={handleToggle}
-            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
-          />
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
+      {/* Mobile Layout */}
+      <div className="block sm:hidden">
+        <div className="flex items-center gap-2 mb-2">
+          {dragHandleProps && (
+            <div
+              {...dragHandleProps}
+              className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 shrink-0"
+            >
+              ⋮⋮
+            </div>
+          )}
+          {showSelection && (
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={handleSelect}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 shrink-0"
+            />
+          )}
+          {!showSelection && (
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={handleToggle}
+              className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer shrink-0"
+            />
+          )}
           <span
             onClick={showSelection ? undefined : handleToggle}
-            className={`text-gray-800 dark:text-gray-100 select-none ${
+            className={`text-gray-800 dark:text-gray-100 select-none flex-1 ${
               showSelection ? "cursor-default" : "cursor-pointer"
             } ${
               task.completed
@@ -162,81 +161,194 @@ const TaskItem: React.FC<TaskItemProps> = ({
           >
             {getTruncatedText(task.text)}
           </span>
-          <div className="flex flex-wrap gap-1 sm:ml-2">
+        </div>
+
+        <div className="flex flex-wrap gap-1 items-center">
+          <span
+            className="px-2 py-1 text-xs rounded-full text-white whitespace-nowrap"
+            style={{
+              backgroundColor:
+                categories.find(
+                  (cat) => cat.id === (task.category || "uncategorized")
+                )?.color || "#6b7280",
+            }}
+          >
+            {categories.find(
+              (cat) => cat.id === (task.category || "uncategorized")
+            )?.label || "Uncategorized"}
+          </span>
+          {task.priority && (
             <span
-              className="px-2 py-1 text-xs rounded-full text-white whitespace-nowrap"
-              style={{
-                backgroundColor:
-                  categories.find(
-                    (cat) => cat.id === (task.category || "uncategorized")
-                  )?.color || "#6b7280",
-              }}
+              className={`px-2 py-1 text-xs rounded-full text-white whitespace-nowrap ${
+                task.priority === "high"
+                  ? "bg-red-500"
+                  : task.priority === "low"
+                  ? "bg-green-500"
+                  : "bg-yellow-500"
+              }`}
             >
-              {categories.find(
-                (cat) => cat.id === (task.category || "uncategorized")
-              )?.label || "Uncategorized"}
+              {task.priority.toUpperCase()}
             </span>
-            {task.priority && (
-              <span
-                className={`px-2 py-1 text-xs rounded-full text-white whitespace-nowrap ${
-                  task.priority === "high"
-                    ? "bg-red-500"
-                    : task.priority === "low"
-                    ? "bg-green-500"
-                    : "bg-yellow-500"
-                }`}
+          )}
+          {task.dueDate && (
+            <span
+              className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${
+                new Date(task.dueDate) < new Date() && !task.completed
+                  ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                  : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+              }`}
+            >
+              📅 {new Date(task.dueDate).toLocaleDateString()}
+            </span>
+          )}
+
+          {!showSelection && (
+            <>
+              <Button
+                onClick={() => setIsViewing(true)}
+                variant="secondary"
+                size="sm"
+                className="px-2 py-1 text-sm cursor-pointer ml-auto"
+                aria-label="View task details"
               >
-                {task.priority.toUpperCase()}
-              </span>
-            )}
-            {task.dueDate && (
-              <span
-                className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${
-                  new Date(task.dueDate) < new Date() && !task.completed
-                    ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                    : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                }`}
+                👁️
+              </Button>
+              <Button
+                onClick={handleEditClick}
+                variant="secondary"
+                size="sm"
+                className="px-2 py-1 text-sm cursor-pointer"
+                aria-label="Edit task"
               >
-                📅 {new Date(task.dueDate).toLocaleDateString()}
-              </span>
-            )}
-          </div>
+                ✏️
+              </Button>
+              {onDelete && (
+                <Button
+                  onClick={handleDelete}
+                  variant="secondary"
+                  size="sm"
+                  className="px-2 py-1 text-sm cursor-pointer"
+                  aria-label="Delete task"
+                >
+                  🗑️
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {!showSelection && (
-        <div className="flex gap-1 shrink-0 self-start sm:self-center">
-          <Button
-            onClick={() => setIsViewing(true)}
-            variant="secondary"
-            size="sm"
-            className="px-2 py-1 text-sm cursor-pointer"
-            aria-label="View task details"
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex items-center gap-3">
+        {dragHandleProps && (
+          <div
+            {...dragHandleProps}
+            className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 shrink-0"
           >
-            👁️
-          </Button>
-          <Button
-            onClick={handleEditClick}
-            variant="secondary"
-            size="sm"
-            className="px-2 py-1 text-sm cursor-pointer"
-            aria-label="Edit task"
+            ⋮⋮
+          </div>
+        )}
+        {showSelection && (
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={handleSelect}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 shrink-0"
+          />
+        )}
+        {!showSelection && (
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={handleToggle}
+            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer shrink-0"
+          />
+        )}
+        <span
+          onClick={showSelection ? undefined : handleToggle}
+          className={`text-gray-800 dark:text-gray-100 select-none flex-1 ${
+            showSelection ? "cursor-default" : "cursor-pointer"
+          } ${
+            task.completed
+              ? "line-through text-gray-500 dark:text-gray-400"
+              : ""
+          }`}
+          title={task.text.length > getCharLimit() ? task.text : undefined}
+        >
+          {getTruncatedText(task.text)}
+        </span>
+        <span
+          className="px-2 py-1 text-xs rounded-full text-white whitespace-nowrap shrink-0"
+          style={{
+            backgroundColor:
+              categories.find(
+                (cat) => cat.id === (task.category || "uncategorized")
+              )?.color || "#6b7280",
+          }}
+        >
+          {categories.find(
+            (cat) => cat.id === (task.category || "uncategorized")
+          )?.label || "Uncategorized"}
+        </span>
+        {task.priority && (
+          <span
+            className={`px-2 py-1 text-xs rounded-full text-white whitespace-nowrap shrink-0 ${
+              task.priority === "high"
+                ? "bg-red-500"
+                : task.priority === "low"
+                ? "bg-green-500"
+                : "bg-yellow-500"
+            }`}
           >
-            ✏️
-          </Button>
-          {onDelete && (
+            {task.priority.toUpperCase()}
+          </span>
+        )}
+        {task.dueDate && (
+          <span
+            className={`px-2 py-1 text-xs rounded-full whitespace-nowrap shrink-0 ${
+              new Date(task.dueDate) < new Date() && !task.completed
+                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+            }`}
+          >
+            📅 {new Date(task.dueDate).toLocaleDateString()}
+          </span>
+        )}
+
+        {!showSelection && (
+          <div className="flex gap-1 shrink-0 ml-auto">
             <Button
-              onClick={handleDelete}
+              onClick={() => setIsViewing(true)}
               variant="secondary"
               size="sm"
               className="px-2 py-1 text-sm cursor-pointer"
-              aria-label="Delete task"
+              aria-label="View task details"
             >
-              🗑️
+              👁️
             </Button>
-          )}
-        </div>
-      )}
+            <Button
+              onClick={handleEditClick}
+              variant="secondary"
+              size="sm"
+              className="px-2 py-1 text-sm cursor-pointer"
+              aria-label="Edit task"
+            >
+              ✏️
+            </Button>
+            {onDelete && (
+              <Button
+                onClick={handleDelete}
+                variant="secondary"
+                size="sm"
+                className="px-2 py-1 text-sm cursor-pointer"
+                aria-label="Delete task"
+              >
+                🗑️
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* View Task Modal */}
       <ViewTaskModal
