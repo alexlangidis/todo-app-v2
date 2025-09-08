@@ -2,13 +2,22 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import TaskItem from "./TaskItem";
-import type { Task, Category } from "../types";
+import type { Task, Category, TaskStatus, TaskPriority } from "../types";
 
 interface SortableTaskItemProps {
   task: Task;
   onToggle: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string, newText: string) => void;
+  onUpdateDetails?: (
+    id: string,
+    updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    }
+  ) => void;
   onArchive?: (id: string) => void;
   onRestore?: (id: string) => void;
   isSelected?: boolean;

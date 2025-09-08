@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { Task, TaskPriority } from "../types";
+import type { Task, TaskPriority, TaskStatus } from "../types";
 import { useLocalStorage } from "./useLocalStorage";
 
 /**
@@ -14,13 +14,15 @@ export const useTasks = () => {
       text: string,
       category?: string,
       dueDate?: Date,
-      priority?: TaskPriority
+      priority?: TaskPriority,
+      status?: TaskStatus
     ) => {
       const newTask: Task = {
         id: Date.now().toString(),
         text,
         completed: false,
         createdAt: new Date(),
+        status: status || "pending",
         category,
         dueDate,
         priority,
@@ -54,6 +56,25 @@ export const useTasks = () => {
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === id ? { ...task, text: newText } : task
+        )
+      );
+    },
+    [setTasks]
+  );
+
+  const updateTaskDetails = useCallback(
+    (
+      id: string,
+      updates: {
+        status?: TaskStatus;
+        category?: string;
+        priority?: TaskPriority;
+        dueDate?: Date;
+      }
+    ) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, ...updates } : task
         )
       );
     },
@@ -142,6 +163,7 @@ export const useTasks = () => {
     toggleTask,
     deleteTask,
     editTask,
+    updateTaskDetails,
     reorderTasks,
     bulkComplete,
     bulkUncomplete,

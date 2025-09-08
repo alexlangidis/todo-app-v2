@@ -1,5 +1,5 @@
 import React from "react";
-import type { Task, Category } from "../types";
+import type { Task, Category, TaskStatus, TaskPriority } from "../types";
 import Button from "./Button";
 import ViewTaskModal from "./ViewTaskModal";
 import EditTaskModal from "./EditTaskModal";
@@ -9,6 +9,15 @@ interface TaskItemProps {
   onToggle: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string, newText: string) => void;
+  onUpdateDetails?: (
+    id: string,
+    updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    }
+  ) => void;
   isSelected?: boolean;
   onSelect?: (id: string) => void;
   showSelection?: boolean;
@@ -23,6 +32,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onToggle,
   onDelete,
   onEdit,
+  onUpdateDetails,
   isSelected = false,
   onSelect,
   showSelection = false,
@@ -228,6 +238,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         isOpen={isViewing}
         onClose={() => setIsViewing(false)}
         onEdit={onEdit}
+        onUpdateDetails={onUpdateDetails}
         categories={categories}
       />
 
@@ -237,6 +248,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         isOpen={isEditingModal}
         onClose={() => setIsEditingModal(false)}
         onSave={onEdit || (() => {})}
+        onUpdateDetails={onUpdateDetails || (() => {})}
         categories={categories}
       />
     </div>

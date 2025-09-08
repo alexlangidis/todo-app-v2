@@ -1,5 +1,6 @@
 import React from "react";
-import type { Task, Category } from "../types";
+import type { Task, Category, TaskStatus, TaskPriority } from "../types";
+import { TASK_PRIORITIES } from "../types";
 import Button from "./Button";
 
 interface EditTaskModalProps {
@@ -7,6 +8,15 @@ interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (id: string, newText: string) => void;
+  onUpdateDetails: (
+    id: string,
+    updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    }
+  ) => void;
   categories: Category[];
 }
 
@@ -15,14 +25,31 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  onUpdateDetails,
   categories,
 }) => {
   const [editText, setEditText] = React.useState(task.text);
+  const [editStatus, setEditStatus] = React.useState<TaskStatus>(
+    task.status || "pending"
+  );
+  const [editCategory, setEditCategory] = React.useState(task.category || "");
+  const [editPriority, setEditPriority] = React.useState<TaskPriority | "">(
+    task.priority || ""
+  );
+  const [editDueDate, setEditDueDate] = React.useState(
+    task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : ""
+  );
   const editTextareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
     setEditText(task.text);
-  }, [task.text]);
+    setEditStatus(task.status || "pending");
+    setEditCategory(task.category || "");
+    setEditPriority(task.priority || "");
+    setEditDueDate(
+      task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : ""
+    );
+  }, [task]);
 
   React.useEffect(() => {
     if (isOpen && editTextareaRef.current) {
@@ -42,14 +69,55 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   const handleSave = () => {
     const trimmedText = editText.trim();
+
+    // Save text changes
     if (trimmedText && trimmedText !== task.text) {
       onSave(task.id, trimmedText);
     }
+
+    // Save other field changes
+    const updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    } = {};
+
+    if (editStatus !== (task.status || "pending")) {
+      updates.status = editStatus;
+    }
+
+    if (editCategory !== (task.category || "")) {
+      updates.category = editCategory || undefined;
+    }
+
+    if (editPriority !== (task.priority || "")) {
+      updates.priority = editPriority || undefined;
+    }
+
+    if (
+      editDueDate !==
+      (task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "")
+    ) {
+      updates.dueDate = editDueDate ? new Date(editDueDate) : undefined;
+    }
+
+    // Only call update if there are changes
+    if (Object.keys(updates).length > 0) {
+      onUpdateDetails(task.id, updates);
+    }
+
     onClose();
   };
 
   const handleCancel = () => {
     setEditText(task.text);
+    setEditStatus(task.status || "pending");
+    setEditCategory(task.category || "");
+    setEditPriority(task.priority || "");
+    setEditDueDate(
+      task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : ""
+    );
     onClose();
   };
 
@@ -105,9 +173,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Status
               </label>
               <span
@@ -122,58 +190,52 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Category
               </label>
-              <span
-                className="inline-block px-2 py-1 text-xs rounded-full text-white"
-                style={{
-                  backgroundColor:
-                    categories.find(
-                      (cat) => cat.id === (task.category || "uncategorized")
-                    )?.color || "#6b7280",
-                }}
+              <select
+                value={editCategory}
+                onChange={(e) => setEditCategory(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
               >
-                {categories.find(
-                  (cat) => cat.id === (task.category || "uncategorized")
-                )?.label || "Uncategorized"}
-              </span>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
             </div>
-            {task.priority && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Priority
-                </label>
-                <span
-                  className={`inline-block px-2 py-1 text-xs rounded-full text-white ${
-                    task.priority === "high"
-                      ? "bg-red-500"
-                      : task.priority === "low"
-                      ? "bg-green-500"
-                      : "bg-yellow-500"
-                  }`}
-                >
-                  {task.priority.toUpperCase()}
-                </span>
-              </div>
-            )}
 
-            {task.dueDate && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Due Date
-                </label>
-                <span
-                  className={`inline-block px-2 py-1 text-xs rounded-full ${
-                    new Date(task.dueDate) < new Date() && !task.completed
-                      ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                      : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                  }`}
-                >
-                  📅 {new Date(task.dueDate).toLocaleDateString()}
-                </span>
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Priority
+              </label>
+              <select
+                value={editPriority}
+                onChange={(e) =>
+                  setEditPriority(e.target.value as TaskPriority)
+                }
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
+              >
+                {TASK_PRIORITIES.map((priority) => (
+                  <option key={priority.id} value={priority.id}>
+                    {priority.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Due Date
+              </label>
+              <input
+                type="date"
+                value={editDueDate}
+                onChange={(e) => setEditDueDate(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
+              />
+            </div>
           </div>
         </div>
 
@@ -189,7 +251,16 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               onClick={handleSave}
               variant="primary"
               size="sm"
-              disabled={!editText.trim() || editText.trim() === task.text}
+              disabled={
+                !editText.trim() ||
+                (editText.trim() === task.text &&
+                  editCategory === (task.category || "") &&
+                  editPriority === (task.priority || "") &&
+                  editDueDate ===
+                    (task.dueDate
+                      ? new Date(task.dueDate).toISOString().split("T")[0]
+                      : ""))
+              }
             >
               Save Changes
             </Button>

@@ -27,6 +27,7 @@ function App() {
     toggleTask,
     deleteTask,
     editTask,
+    updateTaskDetails,
     reorderTasks,
     bulkComplete,
     bulkUncomplete,
@@ -220,6 +221,7 @@ function App() {
                 onToggle={toggleTask}
                 onDelete={deleteTask}
                 onEdit={editTask}
+                onUpdateDetails={updateTaskDetails}
                 onReorder={reorderTasks}
                 onSelectTask={selectTask}
                 onSelectAll={selectAllTasks}

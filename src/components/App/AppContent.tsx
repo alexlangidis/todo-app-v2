@@ -1,5 +1,11 @@
 import React from "react";
-import type { Task, TaskFilter, Category } from "../../types";
+import type {
+  Task,
+  TaskFilter,
+  Category,
+  TaskStatus,
+  TaskPriority,
+} from "../../types";
 import TaskList from "../TaskList";
 import BulkActions from "../BulkActions";
 
@@ -20,6 +26,15 @@ interface AppContentProps {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, newText: string) => void;
+  onUpdateDetails: (
+    id: string,
+    updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    }
+  ) => void;
   onReorder: (activeId: string, overId: string) => void;
   onSelectTask: (id: string) => void;
   onSelectAll: () => void;
@@ -42,6 +57,7 @@ const AppContent: React.FC<AppContentProps> = ({
   onToggle,
   onDelete,
   onEdit,
+  onUpdateDetails,
   onReorder,
   onSelectTask,
   onSelectAll,
@@ -77,6 +93,7 @@ const AppContent: React.FC<AppContentProps> = ({
         onToggle={onToggle}
         onDelete={onDelete}
         onEdit={onEdit}
+        onUpdateDetails={onUpdateDetails}
         onReorder={onReorder}
         selectedTasks={selectedTasks}
         onSelectTask={onSelectTask}

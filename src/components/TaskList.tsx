@@ -1,5 +1,11 @@
 import React from "react";
-import type { Task, TaskFilter, Category } from "../types";
+import type {
+  Task,
+  TaskFilter,
+  Category,
+  TaskStatus,
+  TaskPriority,
+} from "../types";
 import {
   DndContext,
   closestCenter,
@@ -25,6 +31,15 @@ interface TaskListProps {
   onToggle: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string, newText: string) => void;
+  onUpdateDetails?: (
+    id: string,
+    updates: {
+      status?: TaskStatus;
+      category?: string;
+      priority?: TaskPriority;
+      dueDate?: Date;
+    }
+  ) => void;
   onReorder?: (activeId: string, overId: string) => void;
   selectedTasks?: string[];
   onSelectTask?: (id: string) => void;
@@ -41,6 +56,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onToggle,
   onDelete,
   onEdit,
+  onUpdateDetails,
   onReorder,
   selectedTasks = [],
   onSelectTask,
@@ -124,6 +140,7 @@ const TaskList: React.FC<TaskListProps> = ({
               onToggle={onToggle}
               onDelete={onDelete}
               onEdit={onEdit}
+              onUpdateDetails={onUpdateDetails}
               isSelected={selectedTasks.includes(task.id)}
               onSelect={onSelectTask}
               showSelection={showSelection}

@@ -3,6 +3,7 @@ export interface Task {
   text: string;
   completed: boolean;
   createdAt: Date;
+  status?: "pending" | "in-progress" | "completed";
   category?: string;
   dueDate?: Date;
   priority?: "low" | "medium" | "high";
@@ -26,10 +27,17 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: "learning", label: "Learning", color: "#eab308" },
 ];
 
+export const TASK_STATUSES = [
+  { id: "pending", label: "Pending", color: "bg-gray-500" },
+  { id: "in-progress", label: "In Progress", color: "bg-blue-500" },
+  { id: "completed", label: "Completed", color: "bg-green-500" },
+] as const;
+
 export const TASK_PRIORITIES = [
   { id: "low", label: "Low Priority", color: "bg-green-500" },
   { id: "medium", label: "Medium Priority", color: "bg-yellow-500" },
   { id: "high", label: "High Priority", color: "bg-red-500" },
 ] as const;
 
+export type TaskStatus = (typeof TASK_STATUSES)[number]["id"];
 export type TaskPriority = (typeof TASK_PRIORITIES)[number]["id"];

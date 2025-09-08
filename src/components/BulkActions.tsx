@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import type { Category } from "../types";
 
@@ -25,6 +25,24 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   totalTasks,
   categories,
 }) => {
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Reset category selection when selection is cleared
+  useEffect(() => {
+    if (selectedTasks.length === 0) {
+      setSelectedCategory("");
+    }
+  }, [selectedTasks.length]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    onBulkCategoryChange(category);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedCategory("");
+    onClearSelection();
+  };
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
       <div className="flex flex-col sm:flex-row m-auto flex-wrap items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
@@ -35,9 +53,9 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
         <div className="flex flex-col sm:flex-row gap-2 m-auto sm:ml-auto sm:m-0">
           <select
-            onChange={(e) => onBulkCategoryChange(e.target.value)}
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
             className="px-3 py-1 text-sm border border-blue-300 dark:border-blue-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-            defaultValue=""
           >
             <option value="" disabled>
               Change Category
@@ -58,7 +76,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
             Select All
           </Button>
 
-          <Button onClick={onClearSelection} variant="warning" size="sm">
+          <Button onClick={handleClearSelection} variant="warning" size="sm">
             Clear
           </Button>
 

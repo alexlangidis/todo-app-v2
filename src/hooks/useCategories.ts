@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import type { Category } from "../types";
 import { useLocalStorage } from "./useLocalStorage";
 import { DEFAULT_CATEGORIES } from "../types";
@@ -12,6 +12,20 @@ export const useCategories = () => {
     "todo-categories",
     DEFAULT_CATEGORIES
   );
+
+  // Ensure "Uncategorized" category is always present
+  const ensuredCategories = React.useMemo(() => {
+    const hasUncategorized = categories.some(
+      (cat) => cat.id === "uncategorized"
+    );
+    if (!hasUncategorized) {
+      return [
+        { id: "uncategorized", label: "Uncategorized", color: "#6b7280" },
+        ...categories,
+      ];
+    }
+    return categories;
+  }, [categories]);
 
   const addCategory = useCallback(
     (label: string, color: string = "#6b7280") => {
@@ -27,6 +41,11 @@ export const useCategories = () => {
 
   const deleteCategory = useCallback(
     (id: string, tasks: { category?: string }[]) => {
+      // Prevent deletion of "Uncategorized" category
+      if (id === "uncategorized") {
+        throw new Error("Cannot delete the Uncategorized category");
+      }
+
       // Check if category is in use
       const isInUse = tasks.some((task) => task.category === id);
       if (isInUse) {
@@ -41,6 +60,11 @@ export const useCategories = () => {
 
   const renameCategory = useCallback(
     (id: string, newLabel: string) => {
+      // Prevent renaming of "Uncategorized" category
+      if (id === "uncategorized") {
+        throw new Error("Cannot rename the Uncategorized category");
+      }
+
       setCategories((prevCategories) =>
         prevCategories.map((category) =>
           category.id === id ? { ...category, label: newLabel } : category
@@ -80,7 +104,7 @@ export const useCategories = () => {
   );
 
   return {
-    categories,
+    categories: ensuredCategories,
     addCategory,
     deleteCategory,
     renameCategory,
