@@ -1,5 +1,5 @@
 import React from "react";
-import type { Task, TaskFilter } from "../types";
+import type { Task, TaskFilter, Category } from "../types";
 import {
   DndContext,
   closestCenter,
@@ -29,6 +29,7 @@ interface TaskListProps {
   selectedTasks?: string[];
   onSelectTask?: (id: string) => void;
   showSelection?: boolean;
+  categories: Category[];
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -44,6 +45,7 @@ const TaskList: React.FC<TaskListProps> = ({
   selectedTasks = [],
   onSelectTask,
   showSelection = false,
+  categories,
 }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -125,6 +127,7 @@ const TaskList: React.FC<TaskListProps> = ({
               isSelected={selectedTasks.includes(task.id)}
               onSelect={onSelectTask}
               showSelection={showSelection}
+              categories={categories}
             />
           ))}
         </div>

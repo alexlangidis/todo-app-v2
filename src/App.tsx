@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import type { TaskFilter } from "./types";
 import { useTasks } from "./hooks/useTasks";
+import { useCategories } from "./hooks/useCategories";
 import { AppHeader, AppFilters, AppContent } from "./components/App";
 import TaskForm from "./components/TaskForm";
 import TaskStats from "./components/TaskStats";
+import CategoryManager from "./components/CategoryManager";
 
 /**
  * Main application component for the Todo App
@@ -32,6 +34,15 @@ function App() {
     bulkCategoryChange,
     taskStats,
   } = useTasks();
+
+  const {
+    categories,
+    addCategory,
+    deleteCategory,
+    renameCategory,
+    updateCategoryColor,
+    isCategoryNameTaken,
+  } = useCategories();
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("todo-theme");
@@ -157,13 +168,24 @@ function App() {
             </div>
           </div>
 
-          {/* Middle: Add New Task Form */}
+          {/* Column 2: Add New Task Form + Category Manager */}
           <div className=" md:col-span-4 lg:col-span-2 xl:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4 mb-4">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
                 ➕ Add New Task
               </h2>
-              <TaskForm onAddTask={addTask} />
+              <TaskForm onAddTask={addTask} categories={categories} />
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4">
+              <CategoryManager
+                categories={categories}
+                tasks={tasks}
+                onAddCategory={addCategory}
+                onDeleteCategory={deleteCategory}
+                onRenameCategory={renameCategory}
+                onUpdateCategoryColor={updateCategoryColor}
+                isCategoryNameTaken={isCategoryNameTaken}
+              />
             </div>
           </div>
 
@@ -183,6 +205,7 @@ function App() {
                 showBulkActions={showBulkActions}
                 onToggleBulkActions={toggleBulkActions}
                 onClearFilters={clearFilters}
+                categories={categories}
               />
 
               <AppContent
@@ -205,6 +228,7 @@ function App() {
                 onBulkUncomplete={handleBulkUncomplete}
                 onBulkDelete={handleBulkDelete}
                 onBulkCategoryChange={handleBulkCategoryChange}
+                categories={categories}
               />
             </div>
           </div>

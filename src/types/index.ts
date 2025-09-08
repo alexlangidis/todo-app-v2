@@ -9,15 +9,22 @@ export interface Task {
   order: number;
 }
 
+export interface Category {
+  id: string;
+  label: string;
+  color: string;
+}
+
 export type TaskFilter = "all" | "active" | "completed";
 
-export const TASK_CATEGORIES = [
-  { id: "work", label: "Work", color: "bg-blue-500" },
-  { id: "personal", label: "Personal", color: "bg-green-500" },
-  { id: "shopping", label: "Shopping", color: "bg-purple-500" },
-  { id: "health", label: "Health", color: "bg-red-500" },
-  { id: "learning", label: "Learning", color: "bg-yellow-500" },
-] as const;
+export const DEFAULT_CATEGORIES: Category[] = [
+  { id: "uncategorized", label: "Uncategorized", color: "#6b7280" },
+  { id: "work", label: "Work", color: "#3b82f6" },
+  { id: "personal", label: "Personal", color: "#10b981" },
+  { id: "shopping", label: "Shopping", color: "#6366f1" },
+  { id: "health", label: "Health", color: "#ef4444" },
+  { id: "learning", label: "Learning", color: "#eab308" },
+];
 
 export const TASK_PRIORITIES = [
   { id: "low", label: "Low Priority", color: "bg-green-500" },
@@ -25,5 +32,4 @@ export const TASK_PRIORITIES = [
   { id: "high", label: "High Priority", color: "bg-red-500" },
 ] as const;
 
-export type TaskCategory = (typeof TASK_CATEGORIES)[number]["id"];
 export type TaskPriority = (typeof TASK_PRIORITIES)[number]["id"];

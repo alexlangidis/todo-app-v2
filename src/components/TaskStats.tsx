@@ -35,7 +35,7 @@ const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
 
   if (totalTasks === 0) {
     return (
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 mb-6">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4 mb-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
           📊 Task Statistics
         </h3>
@@ -47,7 +47,7 @@ const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4 mb-6">
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4 mb-6">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
         📊 Task Statistics
       </h3>
@@ -79,7 +79,7 @@ const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
         </div>
 
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+          <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
             {completionRate}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -98,7 +98,7 @@ const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${completionRate}%` }}
           ></div>
         </div>

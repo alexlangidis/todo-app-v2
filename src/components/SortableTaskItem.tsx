@@ -2,7 +2,7 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import TaskItem from "./TaskItem";
-import type { Task } from "../types";
+import type { Task, Category } from "../types";
 
 interface SortableTaskItemProps {
   task: Task;
@@ -14,6 +14,7 @@ interface SortableTaskItemProps {
   isSelected?: boolean;
   onSelect?: (id: string) => void;
   showSelection?: boolean;
+  categories: Category[];
 }
 
 const SortableTaskItem: React.FC<SortableTaskItemProps> = (props) => {

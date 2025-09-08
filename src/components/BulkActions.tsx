@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "./Button";
-import { TASK_CATEGORIES } from "../types";
+import type { Category } from "../types";
 
 interface BulkActionsProps {
   selectedTasks: string[];
@@ -11,6 +11,7 @@ interface BulkActionsProps {
   onBulkDelete: () => void;
   onBulkCategoryChange: (category: string) => void;
   totalTasks: number;
+  categories: Category[];
 }
 
 const BulkActions: React.FC<BulkActionsProps> = ({
@@ -22,6 +23,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   onBulkDelete,
   onBulkCategoryChange,
   totalTasks,
+  categories,
 }) => {
   return (
     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
@@ -40,7 +42,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
             <option value="" disabled>
               Change Category
             </option>
-            {TASK_CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.label}
               </option>
@@ -49,22 +51,22 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
           <Button
             onClick={onSelectAll}
-            variant="secondary"
+            variant="primary"
             size="sm"
             disabled={selectedTasks.length === totalTasks}
           >
             Select All
           </Button>
 
-          <Button onClick={onClearSelection} variant="secondary" size="sm">
+          <Button onClick={onClearSelection} variant="warning" size="sm">
             Clear
           </Button>
 
-          <Button onClick={onBulkComplete} variant="primary" size="sm">
+          <Button onClick={onBulkComplete} variant="success" size="sm">
             Complete
           </Button>
 
-          <Button onClick={onBulkUncomplete} variant="secondary" size="sm">
+          <Button onClick={onBulkUncomplete} variant="info" size="sm">
             Uncomplete
           </Button>
 

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Task, TaskFilter } from "../../types";
+import type { Task, TaskFilter, Category } from "../../types";
 import TaskList from "../TaskList";
 import BulkActions from "../BulkActions";
 
@@ -28,6 +28,7 @@ interface AppContentProps {
   onBulkUncomplete: () => void;
   onBulkDelete: () => void;
   onBulkCategoryChange: (category: string) => void;
+  categories: Category[];
 }
 
 const AppContent: React.FC<AppContentProps> = ({
@@ -49,6 +50,7 @@ const AppContent: React.FC<AppContentProps> = ({
   onBulkUncomplete,
   onBulkDelete,
   onBulkCategoryChange,
+  categories,
 }) => {
   return (
     <>
@@ -62,6 +64,7 @@ const AppContent: React.FC<AppContentProps> = ({
           onBulkDelete={onBulkDelete}
           onBulkCategoryChange={onBulkCategoryChange}
           totalTasks={tasks.length}
+          categories={categories}
         />
       )}
 
@@ -78,6 +81,7 @@ const AppContent: React.FC<AppContentProps> = ({
         selectedTasks={selectedTasks}
         onSelectTask={onSelectTask}
         showSelection={showBulkActions}
+        categories={categories}
       />
     </>
   );

@@ -1,6 +1,5 @@
 import React from "react";
-import type { Task } from "../types";
-import { TASK_CATEGORIES } from "../types";
+import type { Task, Category } from "../types";
 import Button from "./Button";
 import ViewTaskModal from "./ViewTaskModal";
 import EditTaskModal from "./EditTaskModal";
@@ -16,6 +15,7 @@ interface TaskItemProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dragHandleProps?: Record<string, any>;
   isDragging?: boolean;
+  categories: Category[];
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -28,6 +28,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   showSelection = false,
   dragHandleProps,
   isDragging = false,
+  categories,
 }) => {
   const [isViewing, setIsViewing] = React.useState(false);
   const [isEditingModal, setIsEditingModal] = React.useState(false);
@@ -148,16 +149,19 @@ const TaskItem: React.FC<TaskItemProps> = ({
         >
           {getTruncatedText(task.text)}
         </span>
-        {task.category && (
-          <span
-            className={`ml-2 px-2 py-1 text-xs rounded-full text-white ${
-              TASK_CATEGORIES.find((cat) => cat.id === task.category)?.color ||
-              "bg-gray-500"
-            }`}
-          >
-            {TASK_CATEGORIES.find((cat) => cat.id === task.category)?.label}
-          </span>
-        )}
+        <span
+          className="ml-2 px-2 py-1 text-xs rounded-full text-white"
+          style={{
+            backgroundColor:
+              categories.find(
+                (cat) => cat.id === (task.category || "uncategorized")
+              )?.color || "#6b7280",
+          }}
+        >
+          {categories.find(
+            (cat) => cat.id === (task.category || "uncategorized")
+          )?.label || "Uncategorized"}
+        </span>
         {task.priority && (
           <span
             className={`ml-2 px-2 py-1 text-xs rounded-full text-white ${
@@ -224,6 +228,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         isOpen={isViewing}
         onClose={() => setIsViewing(false)}
         onEdit={onEdit}
+        categories={categories}
       />
 
       {/* Edit Task Modal */}
@@ -232,6 +237,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
         isOpen={isEditingModal}
         onClose={() => setIsEditingModal(false)}
         onSave={onEdit || (() => {})}
+        categories={categories}
       />
     </div>
   );

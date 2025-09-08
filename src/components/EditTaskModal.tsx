@@ -1,6 +1,5 @@
 import React from "react";
-import type { Task } from "../types";
-import { TASK_CATEGORIES } from "../types";
+import type { Task, Category } from "../types";
 import Button from "./Button";
 
 interface EditTaskModalProps {
@@ -8,6 +7,7 @@ interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (id: string, newText: string) => void;
+  categories: Category[];
 }
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({
@@ -15,6 +15,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  categories,
 }) => {
   const [editText, setEditText] = React.useState(task.text);
   const editTextareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -25,12 +26,17 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   React.useEffect(() => {
     if (isOpen && editTextareaRef.current) {
-      editTextareaRef.current.focus();
-      // Position cursor at the end of the text
-      const textLength = editTextareaRef.current.value.length;
-      editTextareaRef.current.setSelectionRange(textLength, textLength);
+      // Small delay to ensure the textarea value is updated
+      setTimeout(() => {
+        if (editTextareaRef.current) {
+          editTextareaRef.current.focus();
+          // Position cursor at the end of the text without selecting
+          const textLength = editTextareaRef.current.value.length;
+          editTextareaRef.current.setSelectionRange(textLength, textLength);
+        }
+      }, 0);
     }
-  }, [isOpen]);
+  }, [isOpen, editText]);
 
   if (!isOpen) return null;
 
@@ -115,24 +121,24 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               </span>
             </div>
 
-            {task.category && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Category
-                </label>
-                <span
-                  className={`inline-block px-2 py-1 text-xs rounded-full text-white ${
-                    TASK_CATEGORIES.find((cat) => cat.id === task.category)
-                      ?.color || "bg-gray-500"
-                  }`}
-                >
-                  {
-                    TASK_CATEGORIES.find((cat) => cat.id === task.category)
-                      ?.label
-                  }
-                </span>
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Category
+              </label>
+              <span
+                className="inline-block px-2 py-1 text-xs rounded-full text-white"
+                style={{
+                  backgroundColor:
+                    categories.find(
+                      (cat) => cat.id === (task.category || "uncategorized")
+                    )?.color || "#6b7280",
+                }}
+              >
+                {categories.find(
+                  (cat) => cat.id === (task.category || "uncategorized")
+                )?.label || "Uncategorized"}
+              </span>
+            </div>
             {task.priority && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
