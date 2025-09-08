@@ -37,17 +37,17 @@ const AppFilters: React.FC<AppFiltersProps> = ({
 }) => {
   return (
     <>
-      <div className="flex items-center justify-between gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <FilterButtons
           currentFilter={filter}
           onFilterChange={onFilterChange}
           taskCounts={taskCounts}
         />
 
-        <div className="flex gap-2 self-start">
+        <div className="flex flex-wrap gap-2 sm:self-start">
           <button
             onClick={onToggleBulkActions}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               showBulkActions
                 ? "bg-orange-500 text-white dark:bg-orange-600"
                 : "bg-orange-200 text-orange-700 hover:bg-orange-300 dark:bg-orange-700 dark:text-orange-300 dark:hover:bg-orange-600"
@@ -58,7 +58,7 @@ const AppFilters: React.FC<AppFiltersProps> = ({
 
           <button
             onClick={onClearFilters}
-            className="px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+            className="px-3 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap"
           >
             Clear Filters
           </button>
@@ -66,35 +66,41 @@ const AppFilters: React.FC<AppFiltersProps> = ({
       </div>
 
       <div className="mb-4">
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <SearchBar
-            searchQuery={searchQuery}
-            onSearchChange={onSearchChange}
-          />
-          <select
-            value={categoryFilter}
-            onChange={(e) => onCategoryFilterChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={priorityFilter}
-            onChange={(e) => onPriorityFilterChange(e.target.value)}
-            className=" w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100  cursor-pointer"
-          >
-            <option value="">All Priorities</option>
-            {TASK_PRIORITIES.map((priority) => (
-              <option key={priority.id} value={priority.id}>
-                {priority.label}
-              </option>
-            ))}
-          </select>
+        <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-2">
+          <div className="w-full sm:flex-1">
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+            />
+          </div>
+          <div className="w-full sm:w-auto sm:min-w-[160px]">
+            <select
+              value={categoryFilter}
+              onChange={(e) => onCategoryFilterChange(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="w-full sm:w-auto sm:min-w-[140px]">
+            <select
+              value={priorityFilter}
+              onChange={(e) => onPriorityFilterChange(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer"
+            >
+              <option value="">All Priorities</option>
+              {TASK_PRIORITIES.map((priority) => (
+                <option key={priority.id} value={priority.id}>
+                  {priority.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
     </>

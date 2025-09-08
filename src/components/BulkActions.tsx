@@ -51,46 +51,71 @@ const BulkActions: React.FC<BulkActionsProps> = ({
           selected
         </span>
 
-        <div className="flex flex-col sm:flex-row gap-2 m-auto sm:ml-auto sm:m-0">
-          <select
-            value={selectedCategory}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className="px-3 py-1 text-sm border border-blue-300 dark:border-blue-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="" disabled>
-              Change Category
-            </option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.label}
+        <div className="flex flex-col sm:flex-row gap-2 m-auto sm:ml-auto sm:m-0 w-full sm:w-auto">
+          <div className="w-full sm:w-auto sm:min-w-[140px]">
+            <select
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="w-full px-3 py-1 text-sm border border-blue-300 dark:border-blue-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            >
+              <option value="" disabled>
+                Change Category
               </option>
-            ))}
-          </select>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <Button
-            onClick={onSelectAll}
-            variant="primary"
-            size="sm"
-            disabled={selectedTasks.length === totalTasks}
-          >
-            Select All
-          </Button>
+          <div className="flex flex-wrap gap-2 sm:flex-nowrap">
+            <Button
+              onClick={onSelectAll}
+              variant="primary"
+              size="sm"
+              disabled={selectedTasks.length === totalTasks}
+              className="flex-1 sm:flex-none"
+            >
+              Select All
+            </Button>
 
-          <Button onClick={handleClearSelection} variant="warning" size="sm">
-            Clear
-          </Button>
+            <Button
+              onClick={handleClearSelection}
+              variant="warning"
+              size="sm"
+              className="flex-1 sm:flex-none"
+            >
+              Clear
+            </Button>
 
-          <Button onClick={onBulkComplete} variant="success" size="sm">
-            Complete
-          </Button>
+            <Button
+              onClick={onBulkComplete}
+              variant="success"
+              size="sm"
+              className="flex-1 sm:flex-none"
+            >
+              Complete
+            </Button>
 
-          <Button onClick={onBulkUncomplete} variant="info" size="sm">
-            Uncomplete
-          </Button>
+            <Button
+              onClick={onBulkUncomplete}
+              variant="info"
+              size="sm"
+              className="flex-1 sm:flex-none"
+            >
+              Uncomplete
+            </Button>
 
-          <Button onClick={onBulkDelete} variant="danger" size="sm">
-            Delete
-          </Button>
+            <Button
+              onClick={onBulkDelete}
+              variant="danger"
+              size="sm"
+              className="flex-1 sm:flex-none"
+            >
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
     </div>
