@@ -29,6 +29,8 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
   const [editingColor, setEditingColor] = useState("");
   const [error, setError] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const handleAddCategory = () => {
     const trimmedName = newCategoryName.trim();
@@ -52,7 +54,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
     setEditingColor(category.color);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const trimmedName = editingName.trim();
     if (!trimmedName) {
       setError("Category name cannot be empty");
@@ -62,12 +64,21 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
       setError("Category name already exists");
       return;
     }
-    onRenameCategory(editingId!, trimmedName);
-    onUpdateCategoryColor(editingId!, editingColor);
-    setEditingId(null);
-    setEditingName("");
-    setEditingColor("");
-    setError("");
+
+    setSaving(true);
+    try {
+      await onRenameCategory(editingId!, trimmedName);
+      await onUpdateCategoryColor(editingId!, editingColor);
+      setEditingId(null);
+      setEditingName("");
+      setEditingColor("");
+      setError("");
+    } catch (error) {
+      setError("Failed to update category. Please try again.");
+      console.error("Error updating category:", error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -77,14 +88,18 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
     setError("");
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    setDeleting(id);
     try {
-      onDeleteCategory(id, tasks);
+      await onDeleteCategory(id, tasks);
       setDeleteConfirm(null);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to delete category"
       );
+      console.error("Error deleting category:", error);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -105,7 +120,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+        className="w-full text-left focus:outline-none rounded"
       >
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
           🏷️ Manage Categories
@@ -175,8 +190,9 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
                       variant="primary"
                       size="sm"
                       className="px-2 py-1 text-xs cursor-pointer"
+                      disabled={saving}
                     >
-                      Save
+                      {saving ? "..." : "Save"}
                     </Button>
                     <Button
                       onClick={handleCancelEdit}
@@ -212,8 +228,9 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
                           variant="danger"
                           size="sm"
                           className="px-2 py-1 text-xs cursor-pointer"
+                          disabled={deleting === category.id}
                         >
-                          Confirm
+                          {deleting === category.id ? "..." : "Confirm"}
                         </Button>
                         <Button
                           onClick={() => setDeleteConfirm(null)}
