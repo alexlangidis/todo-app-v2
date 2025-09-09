@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "./Button";
 import { TASK_PRIORITIES } from "../types";
 import type { Category } from "../types";
+import { validateTaskText, sanitizeInput } from "../utils/validation";
 
 interface TaskFormProps {
   onAddTask: (
@@ -22,33 +23,34 @@ const TaskForm: React.FC<TaskFormProps> = ({ onAddTask, categories }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedText = text.trim();
 
-    if (!trimmedText) {
-      setError("Task text cannot be empty");
-      return;
-    }
+    // Validate and sanitize input
+    const sanitizedText = sanitizeInput(text);
+    const validation = validateTaskText(sanitizedText);
 
-    if (trimmedText.length > 2888) {
-      setError("Task text must be less than 2888 characters");
+    if (!validation.isValid) {
+      setError(validation.error || "Invalid task text");
       return;
     }
 
     try {
       const dueDateObj = dueDate ? new Date(dueDate) : undefined;
       onAddTask(
-        trimmedText,
+        sanitizedText,
         category || "uncategorized",
         dueDateObj,
         (priority as "low" | "medium" | "high") || "low"
       );
+
+      // Clear form on success
       setText("");
       setCategory("");
       setDueDate("");
       setPriority("");
       setError("");
-    } catch {
-      setError("Failed to add task");
+    } catch (error) {
+      console.error("Error adding task:", error);
+      setError("Failed to add task. Please try again.");
     }
   };
 

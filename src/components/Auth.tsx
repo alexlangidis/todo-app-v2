@@ -5,6 +5,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import Button from "./Button";
+import { validateEmail, validatePassword } from "../utils/validation";
 
 interface AuthProps {
   onAuthSuccess: () => void;
@@ -22,14 +23,38 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
     setLoading(true);
     setError("");
 
+    // Validate inputs
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setError(emailValidation.error || "Invalid email");
+      setLoading(false);
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.error || "Invalid password");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(
+          auth,
+          email.trim().toLowerCase(),
+          password
+        );
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(
+          auth,
+          email.trim().toLowerCase(),
+          password
+        );
       }
       onAuthSuccess();
     } catch (err) {
+      console.error("Authentication error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
