@@ -50,6 +50,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Clean up secrets
+        run: |
+          rm -f .env
+        if: always()
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

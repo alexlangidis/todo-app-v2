@@ -1,17 +1,64 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { useAuth } from "./useAuth";
 import type { Category } from "../types";
-import { useLocalStorage } from "./useLocalStorage";
 import { DEFAULT_CATEGORIES } from "../types";
 
 /**
- * Custom hook for managing categories with localStorage persistence
+ * Custom hook for managing categories with Firestore persistence
  * @returns Object containing categories state and management functions
  */
 export const useCategories = () => {
-  const [categories, setCategories] = useLocalStorage<Category[]>(
-    "todo-categories",
-    DEFAULT_CATEGORIES
-  );
+  const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  // Set up real-time listener for user's categories
+  useEffect(() => {
+    if (!user) {
+      setCategories(DEFAULT_CATEGORIES);
+      setLoading(false);
+      return;
+    }
+
+    const categoriesRef = collection(db, "users", user.uid, "categories");
+    const q = query(categoriesRef, orderBy("createdAt", "asc"));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) {
+        // Initialize with default categories if none exist
+        const initializeCategories = async () => {
+          const batchPromises = DEFAULT_CATEGORIES.map((category) =>
+            addDoc(categoriesRef, {
+              ...category,
+              createdAt: new Date(),
+            })
+          );
+          await Promise.all(batchPromises);
+        };
+        initializeCategories();
+      } else {
+        const categoriesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Category[];
+        setCategories(categoriesData);
+      }
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, [user]);
 
   // Ensure "Uncategorized" category is always present
   const ensuredCategories = React.useMemo(() => {
@@ -28,19 +75,23 @@ export const useCategories = () => {
   }, [categories]);
 
   const addCategory = useCallback(
-    (label: string, color: string = "#6b7280") => {
-      const newCategory: Category = {
-        id: Date.now().toString(),
+    async (label: string, color: string = "#6b7280") => {
+      if (!user) return;
+
+      const categoriesRef = collection(db, "users", user.uid, "categories");
+      await addDoc(categoriesRef, {
         label,
         color,
-      };
-      setCategories((prevCategories) => [...prevCategories, newCategory]);
+        createdAt: new Date(),
+      });
     },
-    [setCategories]
+    [user]
   );
 
   const deleteCategory = useCallback(
-    (id: string, tasks: { category?: string }[]) => {
+    async (id: string, tasks: { category?: string }[]) => {
+      if (!user) return;
+
       // Prevent deletion of "Uncategorized" category
       if (id === "uncategorized") {
         throw new Error("Cannot delete the Uncategorized category");
@@ -51,38 +102,36 @@ export const useCategories = () => {
       if (isInUse) {
         throw new Error("Cannot delete category that is in use by tasks");
       }
-      setCategories((prevCategories) =>
-        prevCategories.filter((category) => category.id !== id)
-      );
+
+      const categoryRef = doc(db, "users", user.uid, "categories", id);
+      await deleteDoc(categoryRef);
     },
-    [setCategories]
+    [user]
   );
 
   const renameCategory = useCallback(
-    (id: string, newLabel: string) => {
+    async (id: string, newLabel: string) => {
+      if (!user) return;
+
       // Prevent renaming of "Uncategorized" category
       if (id === "uncategorized") {
         throw new Error("Cannot rename the Uncategorized category");
       }
 
-      setCategories((prevCategories) =>
-        prevCategories.map((category) =>
-          category.id === id ? { ...category, label: newLabel } : category
-        )
-      );
+      const categoryRef = doc(db, "users", user.uid, "categories", id);
+      await updateDoc(categoryRef, { label: newLabel });
     },
-    [setCategories]
+    [user]
   );
 
   const updateCategoryColor = useCallback(
-    (id: string, newColor: string) => {
-      setCategories((prevCategories) =>
-        prevCategories.map((category) =>
-          category.id === id ? { ...category, color: newColor } : category
-        )
-      );
+    async (id: string, newColor: string) => {
+      if (!user) return;
+
+      const categoryRef = doc(db, "users", user.uid, "categories", id);
+      await updateDoc(categoryRef, { color: newColor });
     },
-    [setCategories]
+    [user]
   );
 
   const getCategoryById = useCallback(
@@ -105,6 +154,7 @@ export const useCategories = () => {
 
   return {
     categories: ensuredCategories,
+    loading,
     addCategory,
     deleteCategory,
     renameCategory,

@@ -47,6 +47,7 @@ function App() {
 
   const {
     categories,
+    loading: categoriesLoading,
     addCategory,
     deleteCategory,
     renameCategory,
@@ -172,8 +173,8 @@ function App() {
     return statusMatch && searchMatch && categoryMatch && priorityMatch;
   });
 
-  // Show loading spinner while checking auth state or loading tasks
-  if (loading || tasksLoading) {
+  // Show loading spinner while checking auth state or loading tasks/categories
+  if (loading || tasksLoading || categoriesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
