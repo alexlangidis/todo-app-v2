@@ -20,11 +20,6 @@ export type TaskFilter = "all" | "active" | "completed";
 
 export const DEFAULT_CATEGORIES: Category[] = [
   { id: "uncategorized", label: "Uncategorized", color: "#6b7280" },
-  { id: "work", label: "Work", color: "#3b82f6" },
-  { id: "personal", label: "Personal", color: "#10b981" },
-  { id: "shopping", label: "Shopping", color: "#6366f1" },
-  { id: "health", label: "Health", color: "#ef4444" },
-  { id: "learning", label: "Learning", color: "#eab308" },
 ];
 
 export const TASK_STATUSES = [

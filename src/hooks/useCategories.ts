@@ -35,25 +35,11 @@ export const useCategories = () => {
     const q = query(categoriesRef, orderBy("createdAt", "asc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        // Initialize with default categories if none exist
-        const initializeCategories = async () => {
-          const batchPromises = DEFAULT_CATEGORIES.map((category) =>
-            addDoc(categoriesRef, {
-              ...category,
-              createdAt: new Date(),
-            })
-          );
-          await Promise.all(batchPromises);
-        };
-        initializeCategories();
-      } else {
-        const categoriesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Category[];
-        setCategories(categoriesData);
-      }
+      const categoriesData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Category[];
+      setCategories(categoriesData);
       setLoading(false);
     });
 
@@ -67,7 +53,7 @@ export const useCategories = () => {
     );
     if (!hasUncategorized) {
       return [
-        { id: "uncategorized", label: "Uncategorized", color: "#6b7280" },
+        DEFAULT_CATEGORIES[0], // "Uncategorized" category
         ...categories,
       ];
     }
