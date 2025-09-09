@@ -15,9 +15,15 @@ interface TaskFormProps {
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ onAddTask, categories }) => {
+  // Get today's date in YYYY-MM-DD format for the date input
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
   const [text, setText] = useState("");
   const [category, setCategory] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(getTodayDate());
   const [priority, setPriority] = useState<string>("");
   const [error, setError] = useState("");
 
