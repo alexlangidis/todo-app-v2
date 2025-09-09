@@ -26,6 +26,47 @@ A responsive to-do application built with React, TypeScript, and Tailwind CSS us
 
 - Node.js (v16 or higher)
 - npm or yarn
+- Firebase project (for authentication and data storage)
+
+### Firebase Setup
+
+1. **Create a Firebase Project:**
+
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Click "Create a project" or select existing project
+   - Enable **Authentication** and **Firestore Database**
+
+2. **Get Firebase Configuration:**
+
+   - Go to Project Settings → General → Your apps → Web app
+   - Copy the configuration values
+
+3. **Set up Environment Variables:**
+
+   ```bash
+   # Copy the example file
+   cp .env.example .env
+
+   # Edit .env with your Firebase config values
+   VITE_FIREBASE_API_KEY=your_api_key_here
+   VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
+
+4. **Configure Firestore Security Rules:**
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /users/{userId}/{documents=**} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+     }
+   }
+   ```
 
 ### Installation
 
@@ -38,11 +79,12 @@ A responsive to-do application built with React, TypeScript, and Tailwind CSS us
    ```bash
    npm install
    ```
-4. Start the development server:
+4. Set up Firebase (see Firebase Setup section above)
+5. Start the development server:
    ```bash
    npm run dev
    ```
-5. Open [http://localhost:5173](http://localhost:5173) in your browser
+6. Open [http://localhost:5173](http://localhost:5173) in your browser
 
 ### Build for Production
 
