@@ -217,7 +217,7 @@ function App() {
               </h2>
               <TaskForm onAddTask={addTask} categories={categories} />
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-20 md:top-4">
               <CategoryManager
                 categories={categories}
                 tasks={tasks}
