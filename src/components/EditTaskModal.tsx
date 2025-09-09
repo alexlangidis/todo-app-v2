@@ -63,7 +63,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
         }
       }, 0);
     }
-  }, [isOpen, editText]);
+  }, [isOpen]); // Removed editText from dependencies to prevent cursor jumping
 
   if (!isOpen) return null;
 
