@@ -2,27 +2,36 @@ import { useState, useEffect } from "react";
 import type { TaskFilter } from "./types";
 import { useTasks } from "./hooks/useTasks";
 import { useCategories } from "./hooks/useCategories";
+import { useAuth } from "./hooks/useAuth";
 import { AppHeader, AppFilters, AppContent } from "./components/App";
 import TaskForm from "./components/TaskForm";
 import TaskStats from "./components/TaskStats";
 import CategoryManager from "./components/CategoryManager";
+import Auth from "./components/Auth";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebase";
 
 /**
  * Main application component for the Todo App
  *
  * Features:
- * - Task management with localStorage persistence
+ * - Task management with Firebase/Firestore persistence
+ * - User authentication (login/register)
  * - Filtering by status, category, and priority
  * - Search functionality
  * - Bulk operations for multiple tasks
  * - Dark mode toggle
  * - Responsive design
+ * - Real-time data synchronization
  *
  * @returns The main application component
  */
 function App() {
+  const { user, loading, isAuthenticated } = useAuth();
+
   const {
     tasks,
+    loading: tasksLoading,
     addTask,
     toggleTask,
     deleteTask,
@@ -71,6 +80,14 @@ function App() {
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   const selectTask = (id: string) => {
@@ -155,10 +172,32 @@ function App() {
     return statusMatch && searchMatch && categoryMatch && priorityMatch;
   });
 
+  // Show loading spinner while checking auth state or loading tasks
+  if (loading || tasksLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show auth component if not authenticated
+  if (!isAuthenticated) {
+    return <Auth onAuthSuccess={() => {}} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="w-full mx-auto">
-        <AppHeader isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
+        <AppHeader
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={toggleDarkMode}
+          onLogout={handleLogout}
+          userEmail={user?.email}
+        />
 
         {/* 3-Column Grid Layout with adjusted widths */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
