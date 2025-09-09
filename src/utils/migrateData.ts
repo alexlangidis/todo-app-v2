@@ -73,3 +73,28 @@ export function hasLocalStorageData(): boolean {
     return false;
   }
 }
+
+/**
+ * Clear all categories from Firestore (useful for resetting to clean state)
+ */
+export async function clearAllCategories(userId: string): Promise<void> {
+  try {
+    const { collection, getDocs, deleteDoc, doc } = await import(
+      "firebase/firestore"
+    );
+    const { db } = await import("../firebase");
+
+    const categoriesRef = collection(db, "users", userId, "categories");
+    const snapshot = await getDocs(categoriesRef);
+
+    const deletePromises = snapshot.docs.map((document) => {
+      return deleteDoc(doc(db, "users", userId, "categories", document.id));
+    });
+
+    await Promise.all(deletePromises);
+    console.log("All categories cleared successfully");
+  } catch (error) {
+    console.error("Error clearing categories:", error);
+    throw error;
+  }
+}

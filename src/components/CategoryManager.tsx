@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import type { Category } from "../types";
+import { clearAllCategories } from "../utils/migrateData";
+import { useAuth } from "../hooks/useAuth";
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -21,6 +23,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
   onUpdateCategoryColor,
   isCategoryNameTaken,
 }) => {
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryColor, setNewCategoryColor] = useState("#6b7280");
@@ -31,6 +34,8 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [resetConfirm, setResetConfirm] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const handleAddCategory = () => {
     const trimmedName = newCategoryName.trim();
@@ -113,6 +118,23 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
         setNewCategoryName("");
         setError("");
       }
+    }
+  };
+
+  const handleResetCategories = async () => {
+    if (!user) return;
+
+    setResetting(true);
+    try {
+      await clearAllCategories(user.uid);
+      setResetConfirm(false);
+      setError("");
+      // The categories will automatically refresh via the Firestore listener
+    } catch (error) {
+      setError("Failed to reset categories. Please try again.");
+      console.error("Error resetting categories:", error);
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -257,6 +279,45 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
               </div>
             ))}
           </div>
+
+          {/* Reset Categories Section */}
+          {categories.length > 1 && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Reset all categories to start fresh
+              </div>
+              {resetConfirm ? (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleResetCategories}
+                    variant="danger"
+                    size="sm"
+                    disabled={resetting}
+                    className="px-3 py-1 text-xs"
+                  >
+                    {resetting ? "Resetting..." : "Confirm Reset"}
+                  </Button>
+                  <Button
+                    onClick={() => setResetConfirm(false)}
+                    variant="secondary"
+                    size="sm"
+                    className="px-3 py-1 text-xs"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => setResetConfirm(true)}
+                  variant="secondary"
+                  size="sm"
+                  className="px-3 py-1 text-xs text-red-600 hover:text-red-700"
+                >
+                  🔄 Reset Categories
+                </Button>
+              )}
+            </div>
+          )}
 
           {categories.length === 0 && (
             <p className="text-center py-4 text-gray-500 dark:text-gray-400">
