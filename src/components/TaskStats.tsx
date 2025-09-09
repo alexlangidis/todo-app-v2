@@ -1,11 +1,12 @@
 import React from "react";
-import type { Task } from "../types";
+import type { Task, Category } from "../types";
 
 interface TaskStatsProps {
   tasks: Task[];
+  categories?: Category[];
 }
 
-const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
+const TaskStats: React.FC<TaskStatsProps> = ({ tasks, categories = [] }) => {
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((task) => task.completed).length;
   const activeTasks = totalTasks - completedTasks;
@@ -113,10 +114,8 @@ const TaskStats: React.FC<TaskStatsProps> = ({ tasks }) => {
           </h4>
           <div className="space-y-2">
             {Object.entries(categoryStats).map(([categoryId, stats]) => {
-              const categoryName =
-                ["work", "personal", "shopping", "health", "learning"].find(
-                  (id) => id === categoryId
-                ) || categoryId;
+              const category = categories.find((cat) => cat.id === categoryId);
+              const categoryName = category ? category.label : categoryId;
               const categoryRate = Math.round(
                 (stats.completed / stats.total) * 100
               );

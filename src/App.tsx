@@ -205,19 +205,19 @@ function App() {
           {/* Column 1: Task Statistics */}
           <div className="md:col-span-4 lg:col-span-2 xl:col-span-1">
             <div className="sticky top-4 rounded-lg shadow-lg">
-              <TaskStats tasks={tasks} />
+              <TaskStats tasks={tasks} categories={categories} />
             </div>
           </div>
 
           {/* Column 2: Add New Task Form + Category Manager */}
           <div className=" md:col-span-4 lg:col-span-2 xl:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4 mb-4 z-10">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
                 ➕ Add New Task
               </h2>
               <TaskForm onAddTask={addTask} categories={categories} />
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-20 md:top-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-20 md:top-4 z-20">
               <CategoryManager
                 categories={categories}
                 tasks={tasks}
