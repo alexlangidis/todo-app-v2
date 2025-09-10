@@ -8,6 +8,8 @@ export interface Task {
   dueDate?: Date;
   priority?: "low" | "medium" | "high";
   order: number;
+  isArchived?: boolean;
+  deletedAt?: Date;
 }
 
 export interface Category {

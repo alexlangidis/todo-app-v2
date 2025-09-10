@@ -39,6 +39,7 @@ export const useTasks = () => {
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
         dueDate: doc.data().dueDate?.toDate(),
+        deletedAt: doc.data().deletedAt?.toDate(),
       })) as Task[];
 
       setTasks(tasksData);
@@ -88,7 +89,33 @@ export const useTasks = () => {
     [user, tasks]
   );
 
-  const deleteTask = useCallback(
+  const archiveTask = useCallback(
+    async (id: string) => {
+      if (!user) return;
+
+      const taskRef = doc(db, "users", user.uid, "tasks", id);
+      await updateDoc(taskRef, {
+        isArchived: true,
+        deletedAt: new Date(),
+      });
+    },
+    [user]
+  );
+
+  const restoreTask = useCallback(
+    async (id: string) => {
+      if (!user) return;
+
+      const taskRef = doc(db, "users", user.uid, "tasks", id);
+      await updateDoc(taskRef, {
+        isArchived: false,
+        deletedAt: null,
+      });
+    },
+    [user]
+  );
+
+  const permanentDeleteTask = useCallback(
     async (id: string) => {
       if (!user) return;
 
@@ -96,6 +123,14 @@ export const useTasks = () => {
       await deleteDoc(taskRef);
     },
     [user]
+  );
+
+  // Keep deleteTask for backward compatibility, but make it archive
+  const deleteTask = useCallback(
+    async (id: string) => {
+      await archiveTask(id);
+    },
+    [archiveTask]
   );
 
   const editTask = useCallback(
@@ -189,14 +224,10 @@ export const useTasks = () => {
     async (selectedIds: string[]) => {
       if (!user) return;
 
-      const deletePromises = selectedIds.map((id) => {
-        const taskRef = doc(db, "users", user.uid, "tasks", id);
-        return deleteDoc(taskRef);
-      });
-
-      await Promise.all(deletePromises);
+      const archivePromises = selectedIds.map((id) => archiveTask(id));
+      await Promise.all(archivePromises);
     },
-    [user]
+    [user, archiveTask]
   );
 
   const bulkCategoryChange = useCallback(
@@ -213,22 +244,37 @@ export const useTasks = () => {
     [user]
   );
 
-  // Computed values
-  const taskStats = useMemo(
-    () => ({
-      all: tasks.length,
-      active: tasks.filter((task) => !task.completed).length,
-      completed: tasks.filter((task) => task.completed).length,
-    }),
+  // Separate active and archived tasks
+  const activeTasks = useMemo(
+    () => tasks.filter((task) => !task.isArchived),
     [tasks]
   );
 
+  const archivedTasks = useMemo(
+    () => tasks.filter((task) => task.isArchived),
+    [tasks]
+  );
+
+  // Computed values
+  const taskStats = useMemo(
+    () => ({
+      all: activeTasks.length,
+      active: activeTasks.filter((task) => !task.completed).length,
+      completed: activeTasks.filter((task) => task.completed).length,
+    }),
+    [activeTasks]
+  );
+
   return {
-    tasks,
+    tasks: activeTasks,
+    archivedTasks,
     loading,
     addTask,
     toggleTask,
     deleteTask,
+    archiveTask,
+    restoreTask,
+    permanentDeleteTask,
     editTask,
     updateTaskDetails,
     reorderTasks,
