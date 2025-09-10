@@ -54,7 +54,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   }, [tasks]);
 
   const navigation = [
-    { name: "Tasks", href: "/", icon: "📝" },
+    { name: "Tasks", href: "/tasks", icon: "📝" },
     { name: "Categories", href: "/categories", icon: "🏷️" },
     { name: "Overdue", href: "/overdue", icon: "⏰", count: overdueCount },
     { name: "Archive", href: "/archive", icon: "📁" },

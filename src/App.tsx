@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import AppHeader from "./components/App/AppHeader";
-import MainPage from "./pages/MainPage";
+import TasksPage from "./pages/TasksPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import OverduePage from "./pages/OverduePage";
 import ArchivePage from "./pages/ArchivePage";
@@ -11,19 +17,10 @@ import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
 
 /**
- * Main application component for the Todo App
- *
- * Features:
- * - Task management with Firebase/Firestore persistence
- * - User authentication (login/register)
- * - Multiple pages: Tasks, Categories, Overdue, Archive
- * - Dark mode toggle
- * - Responsive design
- * - Real-time data synchronization
- *
- * @returns The main application component
+ * App content component that handles navigation after authentication
  */
-function App() {
+function AppContent() {
+  const navigate = useNavigate();
   const { user, loading, isAuthenticated } = useAuth();
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -51,9 +48,16 @@ function App() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      // Redirect to the base app URL to ensure clean logout
+      window.location.href = "/todo-app-v2/";
     } catch (error) {
       console.error("Error signing out:", error);
     }
+  };
+
+  const handleAuthSuccess = () => {
+    // Navigate to tasks page after successful authentication
+    navigate("/tasks");
   };
 
   // Show loading spinner while checking auth state
@@ -70,27 +74,46 @@ function App() {
 
   // Show auth component if not authenticated
   if (!isAuthenticated) {
-    return <Auth onAuthSuccess={() => {}} />;
+    return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <AppHeader
-          isDarkMode={isDarkMode}
-          onToggleDarkMode={toggleDarkMode}
-          onLogout={handleLogout}
-          userEmail={user?.email}
-        />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <AppHeader
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+        onLogout={handleLogout}
+        userEmail={user?.email}
+      />
 
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          {/* Placeholder routes for future pages */}
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/overdue" element={<OverduePage />} />
-          <Route path="/archive" element={<ArchivePage />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<Navigate to="/tasks" replace />} />
+        <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/overdue" element={<OverduePage />} />
+        <Route path="/archive" element={<ArchivePage />} />
+      </Routes>
+    </div>
+  );
+}
+
+/**
+ * Main application component for the Todo App
+ *
+ * Features:
+ * - Task management with Firebase/Firestore persistence
+ * - User authentication (login/register)
+ * - Multiple pages: Tasks, Categories, Overdue, Archive
+ * - Dark mode toggle
+ * - Responsive design
+ * - Real-time data synchronization
+ *
+ * @returns The main application component
+ */
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

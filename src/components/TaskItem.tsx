@@ -202,17 +202,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
             </span>
           )}
 
+          <Button
+            onClick={() => setIsViewing(true)}
+            variant="secondary"
+            size="sm"
+            className="px-2 py-1 text-sm cursor-pointer ml-auto"
+            aria-label="View task details"
+          >
+            👁️
+          </Button>
           {!showSelection && (
             <>
-              <Button
-                onClick={() => setIsViewing(true)}
-                variant="secondary"
-                size="sm"
-                className="px-2 py-1 text-sm cursor-pointer ml-auto"
-                aria-label="View task details"
-              >
-                👁️
-              </Button>
               <Button
                 onClick={handleEditClick}
                 variant="secondary"
@@ -315,39 +315,41 @@ const TaskItem: React.FC<TaskItemProps> = ({
           </span>
         )}
 
-        {!showSelection && (
-          <div className="flex gap-1 shrink-0 ml-auto">
-            <Button
-              onClick={() => setIsViewing(true)}
-              variant="secondary"
-              size="sm"
-              className="px-2 py-1 text-sm cursor-pointer"
-              aria-label="View task details"
-            >
-              👁️
-            </Button>
-            <Button
-              onClick={handleEditClick}
-              variant="secondary"
-              size="sm"
-              className="px-2 py-1 text-sm cursor-pointer"
-              aria-label="Edit task"
-            >
-              ✏️
-            </Button>
-            {onDelete && (
+        <div className="flex gap-1 shrink-0 ml-auto">
+          <Button
+            onClick={() => setIsViewing(true)}
+            variant="secondary"
+            size="sm"
+            className="px-2 py-1 text-sm cursor-pointer"
+            aria-label="View task details"
+          >
+            👁️
+          </Button>
+          {!showSelection && (
+            <>
               <Button
-                onClick={handleDelete}
+                onClick={handleEditClick}
                 variant="secondary"
                 size="sm"
                 className="px-2 py-1 text-sm cursor-pointer"
-                aria-label="Delete task"
+                aria-label="Edit task"
               >
-                🗑️
+                ✏️
               </Button>
-            )}
-          </div>
-        )}
+              {onDelete && (
+                <Button
+                  onClick={handleDelete}
+                  variant="secondary"
+                  size="sm"
+                  className="px-2 py-1 text-sm cursor-pointer"
+                  aria-label="Delete task"
+                >
+                  🗑️
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       {/* View Task Modal */}
