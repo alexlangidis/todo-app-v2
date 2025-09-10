@@ -3,7 +3,6 @@ import type { TaskFilter } from "../types";
 import { useTasks } from "../hooks/useTasks";
 import { useCategories } from "../hooks/useCategories";
 import TaskForm from "../components/TaskForm";
-import TaskStats from "../components/TaskStats";
 import { AppFilters, AppContent } from "../components/App";
 
 /**
@@ -133,15 +132,8 @@ function MainPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="w-full mx-auto">
         {/* 2-Column Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-          {/* Column 1: Task Statistics */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-4 rounded-lg shadow-lg">
-              <TaskStats tasks={tasks} categories={categories} />
-            </div>
-          </div>
-
-          {/* Column 2: Add New Task Form */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+          {/* Column 1: Add New Task Form (1/3 width) */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sticky top-4 mb-4 z-10">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
@@ -150,50 +142,50 @@ function MainPage() {
               <TaskForm onAddTask={addTask} categories={categories} />
             </div>
           </div>
-        </div>
 
-        {/* Tasks Section */}
-        <div className="mt-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <AppFilters
-              filter={filter}
-              onFilterChange={setFilter}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              categoryFilter={categoryFilter}
-              onCategoryFilterChange={setCategoryFilter}
-              priorityFilter={priorityFilter}
-              onPriorityFilterChange={setPriorityFilter}
-              taskCounts={taskStats}
-              showBulkActions={showBulkActions}
-              onToggleBulkActions={toggleBulkActions}
-              onClearFilters={clearFilters}
-              categories={categories}
-            />
+          {/* Column 2: Task List (2/3 width) */}
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <AppFilters
+                filter={filter}
+                onFilterChange={setFilter}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                categoryFilter={categoryFilter}
+                onCategoryFilterChange={setCategoryFilter}
+                priorityFilter={priorityFilter}
+                onPriorityFilterChange={setPriorityFilter}
+                taskCounts={taskStats}
+                showBulkActions={showBulkActions}
+                onToggleBulkActions={toggleBulkActions}
+                onClearFilters={clearFilters}
+                categories={categories}
+              />
 
-            <AppContent
-              tasks={filteredTasks}
-              filter={filter}
-              searchQuery={searchQuery}
-              categoryFilter={categoryFilter}
-              priorityFilter={priorityFilter}
-              selectedTasks={selectedTasks}
-              showBulkActions={showBulkActions}
-              onAddTask={addTask}
-              onToggle={toggleTask}
-              onDelete={deleteTask}
-              onEdit={editTask}
-              onUpdateDetails={updateTaskDetails}
-              onReorder={reorderTasks}
-              onSelectTask={selectTask}
-              onSelectAll={selectAllTasks}
-              onClearSelection={clearSelection}
-              onBulkComplete={handleBulkComplete}
-              onBulkUncomplete={handleBulkUncomplete}
-              onBulkDelete={handleBulkDelete}
-              onBulkCategoryChange={handleBulkCategoryChange}
-              categories={categories}
-            />
+              <AppContent
+                tasks={filteredTasks}
+                filter={filter}
+                searchQuery={searchQuery}
+                categoryFilter={categoryFilter}
+                priorityFilter={priorityFilter}
+                selectedTasks={selectedTasks}
+                showBulkActions={showBulkActions}
+                onAddTask={addTask}
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEdit={editTask}
+                onUpdateDetails={updateTaskDetails}
+                onReorder={reorderTasks}
+                onSelectTask={selectTask}
+                onSelectAll={selectAllTasks}
+                onClearSelection={clearSelection}
+                onBulkComplete={handleBulkComplete}
+                onBulkUncomplete={handleBulkUncomplete}
+                onBulkDelete={handleBulkDelete}
+                onBulkCategoryChange={handleBulkCategoryChange}
+                categories={categories}
+              />
+            </div>
           </div>
         </div>
       </div>

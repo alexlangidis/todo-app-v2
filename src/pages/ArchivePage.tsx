@@ -106,6 +106,20 @@ function ArchivePage() {
     return sortedTasks.slice(startIndex, startIndex + itemsPerPage);
   }, [sortedTasks, currentPage]);
 
+  const selectTask = (id: string) => {
+    setSelectedTasks((prev) =>
+      prev.includes(id) ? prev.filter((taskId) => taskId !== id) : [...prev, id]
+    );
+  };
+
+  const selectAllTasks = useCallback(() => {
+    setSelectedTasks(sortedTasks.map((task) => task.id));
+  }, [sortedTasks]);
+
+  const clearSelection = () => {
+    setSelectedTasks([]);
+  };
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -128,21 +142,7 @@ function ArchivePage() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedTasks]);
-
-  const selectTask = (id: string) => {
-    setSelectedTasks((prev) =>
-      prev.includes(id) ? prev.filter((taskId) => taskId !== id) : [...prev, id]
-    );
-  };
-
-  const selectAllTasks = useCallback(() => {
-    setSelectedTasks(sortedTasks.map((task) => task.id));
-  }, [sortedTasks]);
-
-  const clearSelection = () => {
-    setSelectedTasks([]);
-  };
+  }, [selectedTasks, selectAllTasks]);
 
   const handleBulkRestore = () => {
     setShowConfirmDialog({ type: "bulk-restore" });

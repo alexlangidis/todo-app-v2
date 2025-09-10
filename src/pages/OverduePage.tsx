@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTasks } from "../hooks/useTasks";
 import { useCategories } from "../hooks/useCategories";
 import TaskList from "../components/TaskList";
@@ -96,13 +96,37 @@ function OverduePage() {
     );
   };
 
-  const selectAllTasks = () => {
+  const selectAllTasks = useCallback(() => {
     setSelectedTasks(sortedTasks.map((task) => task.id));
-  };
+  }, [sortedTasks]);
 
   const clearSelection = () => {
     setSelectedTasks([]);
   };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case "a":
+            event.preventDefault();
+            selectAllTasks();
+            break;
+          case "Delete":
+          case "Backspace":
+            if (selectedTasks.length > 0) {
+              event.preventDefault();
+              setShowConfirmDialog({ type: "bulk" });
+            }
+            break;
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedTasks, selectAllTasks]);
 
   const handleBulkComplete = () => {
     setShowConfirmDialog({ type: "bulk-complete" });
@@ -147,30 +171,6 @@ function OverduePage() {
       setShowConfirmDialog(null);
     }
   };
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey) {
-        switch (event.key) {
-          case "a":
-            event.preventDefault();
-            selectAllTasks();
-            break;
-          case "Delete":
-          case "Backspace":
-            if (selectedTasks.length > 0) {
-              event.preventDefault();
-              setShowConfirmDialog({ type: "bulk" });
-            }
-            break;
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedTasks]);
 
   const toggleSort = (field: typeof sortBy) => {
     if (sortBy === field) {

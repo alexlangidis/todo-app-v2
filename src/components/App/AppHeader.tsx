@@ -135,13 +135,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({
               {isDarkMode ? "☀️" : "🌙"}
             </Button>
 
-            {/* Logout button */}
+            {/* Logout button - hidden on mobile since it's in mobile menu */}
             {onLogout && (
               <Button
                 onClick={onLogout}
                 variant="secondary"
                 size="sm"
-                className="text-xs hidden sm:block"
+                className="text-xs hidden lg:block"
               >
                 Logout
               </Button>

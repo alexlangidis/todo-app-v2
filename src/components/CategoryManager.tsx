@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import type { Category } from "../types";
-import { clearAllCategories } from "../utils/migrateData";
 import { useAuth } from "../hooks/useAuth";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../firebase";
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -135,7 +136,16 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
 
     setResetting(true);
     try {
-      await clearAllCategories(user.uid);
+      const categoriesRef = collection(db, "users", user.uid, "categories");
+      const snapshot = await getDocs(categoriesRef);
+
+      const deletePromises = snapshot.docs.map((document) => {
+        return deleteDoc(doc(db, "users", user.uid, "categories", document.id));
+      });
+
+      await Promise.all(deletePromises);
+      console.log("All categories cleared successfully");
+
       setResetConfirm(false);
       setError("");
       // The categories will automatically refresh via the Firestore listener
