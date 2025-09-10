@@ -66,11 +66,19 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
     setError("");
 
     try {
+      // First try to sign in with existing demo user
       await signInWithEmailAndPassword(auth, "demo@demo.com", "demo123");
       onAuthSuccess();
-    } catch (err) {
-      console.error("Demo login error:", err);
-      setError("Demo login failed. Please try again.");
+    } catch {
+      console.log("Demo user doesn't exist, creating new demo user...");
+      try {
+        // If sign in fails, create the demo user
+        await createUserWithEmailAndPassword(auth, "demo@demo.com", "demo123");
+        onAuthSuccess();
+      } catch (createError) {
+        console.error("Demo login error:", createError);
+        setError("Demo login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
