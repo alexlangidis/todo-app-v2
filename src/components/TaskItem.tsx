@@ -48,6 +48,7 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
   >("desktop");
   const [showConfetti, setShowConfetti] = React.useState(false);
   const [isFading, setIsFading] = React.useState(false);
+  const [prevCompleted, setPrevCompleted] = React.useState(task.completed);
 
   // Screen size detection for responsive truncation
   React.useEffect(() => {
@@ -66,6 +67,19 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
     window.addEventListener("resize", updateScreenSize);
     return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
+
+  // Detect when task becomes completed and trigger celebration
+  React.useEffect(() => {
+    if (task.completed && !prevCompleted) {
+      setShowConfetti(true);
+      setIsFading(true);
+      // Stop confetti after 3 seconds
+      setTimeout(() => setShowConfetti(false), 3000);
+      // Stop fading after animation
+      setTimeout(() => setIsFading(false), 1000);
+    }
+    setPrevCompleted(task.completed);
+  }, [task.completed, prevCompleted]);
 
   // Get character limit based on screen size
   const getCharLimit = () => {
@@ -90,17 +104,7 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
 
   const handleToggle = () => {
     try {
-      const wasCompleted = task.completed;
       onToggle(task.id);
-      // If task was not completed and now will be, trigger celebration
-      if (!wasCompleted) {
-        setShowConfetti(true);
-        setIsFading(true);
-        // Stop confetti after 3 seconds
-        setTimeout(() => setShowConfetti(false), 3000);
-        // Stop fading after animation
-        setTimeout(() => setIsFading(false), 1000);
-      }
     } catch (error) {
       console.error("Failed to toggle task:", error);
     }
