@@ -22,7 +22,8 @@ interface TaskItemProps {
   onSelect?: (id: string) => void;
   showSelection?: boolean;
   categories: Category[];
-  dragHandleProps?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dragHandleProps?: Record<string, any>;
   isDragging?: boolean;
 }
 
