@@ -1,5 +1,6 @@
 import React from "react";
 import type { Task, Category, TaskStatus, TaskPriority } from "../types";
+import Confetti from "react-confetti";
 import Button from "./Button";
 import ViewTaskModal from "./ViewTaskModal";
 import EditTaskModal from "./EditTaskModal";
@@ -45,6 +46,8 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
   const [screenSize, setScreenSize] = React.useState<
     "mobile" | "tablet" | "desktop"
   >("desktop");
+  const [showConfetti, setShowConfetti] = React.useState(false);
+  const [isFading, setIsFading] = React.useState(false);
 
   // Screen size detection for responsive truncation
   React.useEffect(() => {
@@ -87,7 +90,17 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
 
   const handleToggle = () => {
     try {
+      const wasCompleted = task.completed;
       onToggle(task.id);
+      // If task was not completed and now will be, trigger celebration
+      if (!wasCompleted) {
+        setShowConfetti(true);
+        setIsFading(true);
+        // Stop confetti after 3 seconds
+        setTimeout(() => setShowConfetti(false), 3000);
+        // Stop fading after animation
+        setTimeout(() => setIsFading(false), 1000);
+      }
     } catch (error) {
       console.error("Failed to toggle task:", error);
     }
@@ -119,8 +132,16 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
         isSelected
           ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
           : "border-gray-200 dark:border-gray-600"
-      }`}
+      } ${isFading ? "opacity-0 transition-opacity duration-1000" : ""}`}
     >
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
       {/* Mobile Layout */}
       <div className="block sm:hidden">
         <div className="flex items-center gap-2 mb-2">
