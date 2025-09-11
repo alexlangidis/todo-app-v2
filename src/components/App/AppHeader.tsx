@@ -141,7 +141,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                 onClick={onLogout}
                 variant="secondary"
                 size="sm"
-                className="text-xs hidden lg:block"
+                className="text-xs !hidden md:!block"
               >
                 Logout
               </Button>

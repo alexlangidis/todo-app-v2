@@ -17,7 +17,6 @@ function MainPage() {
     deleteTask,
     editTask,
     updateTaskDetails,
-    reorderTasks,
     bulkComplete,
     bulkUncomplete,
     bulkDelete,
@@ -27,7 +26,7 @@ function MainPage() {
 
   const { categories, loading: categoriesLoading } = useCategories();
 
-  const [filter, setFilter] = useState<TaskFilter>("all");
+  const [filter, setFilter] = useState<TaskFilter>("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [priorityFilter, setPriorityFilter] = useState<string>("");
@@ -175,7 +174,6 @@ function MainPage() {
                 onDelete={deleteTask}
                 onEdit={editTask}
                 onUpdateDetails={updateTaskDetails}
-                onReorder={reorderTasks}
                 onSelectTask={selectTask}
                 onSelectAll={selectAllTasks}
                 onClearSelection={clearSelection}

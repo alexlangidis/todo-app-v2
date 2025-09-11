@@ -21,9 +21,6 @@ interface TaskItemProps {
   isSelected?: boolean;
   onSelect?: (id: string) => void;
   showSelection?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dragHandleProps?: Record<string, any>;
-  isDragging?: boolean;
   categories: Category[];
 }
 
@@ -36,8 +33,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isSelected = false,
   onSelect,
   showSelection = false,
-  dragHandleProps,
-  isDragging = false,
   categories,
 }) => {
   const [isViewing, setIsViewing] = React.useState(false);
@@ -119,19 +114,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
         isSelected
           ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
           : "border-gray-200 dark:border-gray-600"
-      } ${isDragging ? "opacity-50" : ""}`}
+      }`}
     >
       {/* Mobile Layout */}
       <div className="block sm:hidden">
         <div className="flex items-center gap-2 mb-2">
-          {dragHandleProps && (
-            <div
-              {...dragHandleProps}
-              className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 shrink-0"
-            >
-              ⋮⋮
-            </div>
-          )}
           {showSelection && (
             <input
               type="checkbox"
@@ -240,14 +227,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
       {/* Desktop Layout */}
       <div className="hidden sm:flex items-center gap-3">
-        {dragHandleProps && (
-          <div
-            {...dragHandleProps}
-            className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-1 shrink-0"
-          >
-            ⋮⋮
-          </div>
-        )}
         {showSelection && (
           <input
             type="checkbox"

@@ -6,21 +6,7 @@ import type {
   TaskStatus,
   TaskPriority,
 } from "../types";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import SortableTaskItem from "./SortableTaskItem";
+import TaskItem from "./TaskItem";
 
 interface TaskListProps {
   tasks: Task[];
@@ -40,7 +26,6 @@ interface TaskListProps {
       dueDate?: Date;
     }
   ) => void;
-  onReorder?: (activeId: string, overId: string) => void;
   selectedTasks?: string[];
   onSelectTask?: (id: string) => void;
   showSelection?: boolean;
@@ -57,26 +42,11 @@ const TaskList: React.FC<TaskListProps> = ({
   onDelete,
   onEdit,
   onUpdateDetails,
-  onReorder,
   selectedTasks = [],
   onSelectTask,
   showSelection = false,
   categories,
 }) => {
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id && onReorder) {
-      onReorder(active.id as string, over.id as string);
-    }
-  };
   const filteredTasks = tasks.filter((task) => {
     // Filter by status
     const statusMatch = (() => {
@@ -123,33 +93,22 @@ const TaskList: React.FC<TaskListProps> = ({
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={filteredTasks.map((task) => task.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        <div className="space-y-2">
-          {filteredTasks.map((task) => (
-            <SortableTaskItem
-              key={task.id}
-              task={task}
-              onToggle={onToggle}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onUpdateDetails={onUpdateDetails}
-              isSelected={selectedTasks.includes(task.id)}
-              onSelect={onSelectTask}
-              showSelection={showSelection}
-              categories={categories}
-            />
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+    <div className="space-y-2">
+      {filteredTasks.map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          onToggle={onToggle}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onUpdateDetails={onUpdateDetails}
+          isSelected={selectedTasks.includes(task.id)}
+          onSelect={onSelectTask}
+          showSelection={showSelection}
+          categories={categories}
+        />
+      ))}
+    </div>
   );
 };
 

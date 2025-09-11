@@ -17,9 +17,9 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({
   taskCounts,
 }) => {
   const filters: { key: TaskFilter; label: string; count: number }[] = [
-    { key: "all", label: "All", count: taskCounts.all },
     { key: "active", label: "Active", count: taskCounts.active },
     { key: "completed", label: "Completed", count: taskCounts.completed },
+    { key: "all", label: "All", count: taskCounts.all },
   ];
 
   return (

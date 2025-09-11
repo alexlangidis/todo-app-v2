@@ -35,7 +35,6 @@ interface AppContentProps {
       dueDate?: Date;
     }
   ) => void;
-  onReorder: (activeId: string, overId: string) => void;
   onSelectTask: (id: string) => void;
   onSelectAll: () => void;
   onClearSelection: () => void;
@@ -58,7 +57,6 @@ const AppContent: React.FC<AppContentProps> = ({
   onDelete,
   onEdit,
   onUpdateDetails,
-  onReorder,
   onSelectTask,
   onSelectAll,
   onClearSelection,
@@ -94,7 +92,6 @@ const AppContent: React.FC<AppContentProps> = ({
         onDelete={onDelete}
         onEdit={onEdit}
         onUpdateDetails={onUpdateDetails}
-        onReorder={onReorder}
         selectedTasks={selectedTasks}
         onSelectTask={onSelectTask}
         showSelection={showBulkActions}
