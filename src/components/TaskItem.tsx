@@ -22,19 +22,23 @@ interface TaskItemProps {
   onSelect?: (id: string) => void;
   showSelection?: boolean;
   categories: Category[];
+  dragHandleProps?: any;
+  isDragging?: boolean;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({
-  task,
-  onToggle,
-  onDelete,
-  onEdit,
-  onUpdateDetails,
-  isSelected = false,
-  onSelect,
-  showSelection = false,
-  categories,
-}) => {
+const TaskItem: React.FC<TaskItemProps> = (props) => {
+  console.log("TaskItem props:", props); // Logging to validate assumptions about props
+  const {
+    task,
+    onToggle,
+    onDelete,
+    onEdit,
+    onUpdateDetails,
+    isSelected = false,
+    onSelect,
+    showSelection = false,
+    categories,
+  } = props;
   const [isViewing, setIsViewing] = React.useState(false);
   const [isEditingModal, setIsEditingModal] = React.useState(false);
   const [screenSize, setScreenSize] = React.useState<
