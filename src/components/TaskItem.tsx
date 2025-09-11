@@ -110,11 +110,11 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
 
         setIsCompleting(true);
 
-        // Complete the task after 2 seconds
+        // Complete the task after 1.5 seconds
         setTimeout(() => {
           onToggle(task.id);
           setIsCompleting(false);
-        }, 2000);
+        }, 1500);
       } else {
         // If uncompleting, toggle immediately
         onToggle(task.id);
