@@ -80,16 +80,15 @@ const useConfettiStars = (onComplete?: () => void) => {
 };
 
 const ConfettiStars: React.FC<ConfettiStarsProps> = ({ onComplete }) => {
-  const { triggerConfetti } = useConfettiStars(onComplete);
-
   // This component doesn't render anything visible
   React.useEffect(() => {
     // Component is ready to trigger confetti when needed
-  }, []);
+  }, [onComplete]);
 
   return null;
 };
 
 export default ConfettiStars;
+// eslint-disable-next-line react-refresh/only-export-components
 export { useConfettiStars };
 export type { ConfettiStarsProps };
